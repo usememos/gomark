@@ -39,12 +39,20 @@ func (r *StringRenderer) RenderNode(node ast.Node) {
 		r.renderHorizontalRule(n)
 	case *ast.Blockquote:
 		r.renderBlockquote(n)
-	case *ast.TaskList:
-		r.renderTaskList(n)
 	case *ast.UnorderedList:
 		r.renderUnorderedList(n)
 	case *ast.OrderedList:
 		r.renderOrderedList(n)
+	case *ast.TaskList:
+		r.renderTaskList(n)
+	case *ast.MathBlock:
+		r.renderMathBlock(n)
+	case *ast.Table:
+		r.renderTable(n)
+	case *ast.EmbeddedContent:
+		r.renderEmbeddedContent(n)
+	case *ast.Text:
+		r.renderText(n)
 	case *ast.Bold:
 		r.renderBold(n)
 	case *ast.Italic:
@@ -57,14 +65,24 @@ func (r *StringRenderer) RenderNode(node ast.Node) {
 		r.renderImage(n)
 	case *ast.Link:
 		r.renderLink(n)
+	case *ast.AutoLink:
+		r.renderAutoLink(n)
 	case *ast.Tag:
 		r.renderTag(n)
 	case *ast.Strikethrough:
 		r.renderStrikethrough(n)
 	case *ast.EscapingCharacter:
 		r.renderEscapingCharacter(n)
-	case *ast.Text:
-		r.renderText(n)
+	case *ast.Math:
+		r.renderMath(n)
+	case *ast.Highlight:
+		r.renderHighlight(n)
+	case *ast.Subscript:
+		r.renderSubscript(n)
+	case *ast.Superscript:
+		r.renderSuperscript(n)
+	case *ast.ReferencedContent:
+		r.renderReferencedContent(n)
 	default:
 		// Handle other block types if needed.
 	}
@@ -122,12 +140,6 @@ func (r *StringRenderer) renderBlockquote(node *ast.Blockquote) {
 	r.output.WriteString("\n")
 }
 
-func (r *StringRenderer) renderTaskList(node *ast.TaskList) {
-	r.output.WriteString(node.Symbol)
-	r.RenderNodes(node.Children)
-	r.output.WriteString("\n")
-}
-
 func (r *StringRenderer) renderUnorderedList(node *ast.UnorderedList) {
 	r.output.WriteString(node.Symbol)
 	r.RenderNodes(node.Children)
@@ -138,6 +150,40 @@ func (r *StringRenderer) renderOrderedList(node *ast.OrderedList) {
 	r.output.WriteString(fmt.Sprintf("%s. ", node.Number))
 	r.RenderNodes(node.Children)
 	r.output.WriteString("\n")
+}
+
+func (r *StringRenderer) renderTaskList(node *ast.TaskList) {
+	r.output.WriteString(node.Symbol)
+	r.RenderNodes(node.Children)
+	r.output.WriteString("\n")
+}
+
+func (r *StringRenderer) renderMathBlock(node *ast.MathBlock) {
+	r.output.WriteString(node.Content)
+	r.output.WriteString("\n")
+}
+
+func (r *StringRenderer) renderTable(node *ast.Table) {
+	for _, cell := range node.Header {
+		r.output.WriteString(cell)
+		r.output.WriteString("\t")
+	}
+	r.output.WriteString("\n")
+	for _, row := range node.Rows {
+		for _, cell := range row {
+			r.output.WriteString(cell)
+			r.output.WriteString("\t")
+		}
+		r.output.WriteString("\n")
+	}
+}
+
+func (r *StringRenderer) renderEmbeddedContent(node *ast.EmbeddedContent) {
+	r.output.WriteString(node.ResourceName)
+	if node.Params != "" {
+		r.output.WriteString("?")
+		r.output.WriteString(node.Params)
+	}
 }
 
 func (r *StringRenderer) renderText(node *ast.Text) {
@@ -170,6 +216,10 @@ func (r *StringRenderer) renderLink(node *ast.Link) {
 	r.output.WriteString(node.Text)
 }
 
+func (r *StringRenderer) renderAutoLink(node *ast.AutoLink) {
+	r.output.WriteString(node.URL)
+}
+
 func (r *StringRenderer) renderTag(node *ast.Tag) {
 	r.output.WriteString(`#`)
 	r.output.WriteString(node.Content)
@@ -182,4 +232,28 @@ func (r *StringRenderer) renderStrikethrough(node *ast.Strikethrough) {
 func (r *StringRenderer) renderEscapingCharacter(node *ast.EscapingCharacter) {
 	r.output.WriteString("\\")
 	r.output.WriteString(node.Symbol)
+}
+
+func (r *StringRenderer) renderMath(node *ast.Math) {
+	r.output.WriteString(node.Content)
+}
+
+func (r *StringRenderer) renderHighlight(node *ast.Highlight) {
+	r.output.WriteString(node.Content)
+}
+
+func (r *StringRenderer) renderSubscript(node *ast.Subscript) {
+	r.output.WriteString(node.Content)
+}
+
+func (r *StringRenderer) renderSuperscript(node *ast.Superscript) {
+	r.output.WriteString(node.Content)
+}
+
+func (r *StringRenderer) renderReferencedContent(node *ast.ReferencedContent) {
+	r.output.WriteString(node.ResourceName)
+	if node.Params != "" {
+		r.output.WriteString("?")
+		r.output.WriteString(node.Params)
+	}
 }

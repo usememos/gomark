@@ -5,11 +5,6 @@ import (
 	"github.com/usememos/gomark/parser/tokenizer"
 )
 
-type Context struct {
-	BlockParsers  []BlockParser
-	InlineParsers []InlineParser
-}
-
 type BaseParser interface {
 	Match(tokens []*tokenizer.Token) (ast.Node, int)
 }
