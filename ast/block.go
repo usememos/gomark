@@ -104,10 +104,13 @@ func (*Blockquote) Type() NodeType {
 
 func (n *Blockquote) Restore() string {
 	var result string
-	for _, child := range n.Children {
-		result += child.Restore()
+	for i, child := range n.Children {
+		result += fmt.Sprintf("> %s", child.Restore())
+		if i != len(n.Children)-1 {
+			result += "\n"
+		}
 	}
-	return fmt.Sprintf("> %s", result)
+	return result
 }
 
 type OrderedList struct {
