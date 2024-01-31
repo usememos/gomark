@@ -49,9 +49,10 @@ func (*TaskListParser) Match(tokens []*tokenizer.Token) (ast.Node, int) {
 		return nil, 0
 	}
 	return &ast.TaskList{
-		Symbol:   symbolToken.Type,
-		Indent:   indent,
-		Complete: matchedTokens[indent+3].Value == "x",
-		Children: children,
+		BaseBlock: ast.NewBaseBlock(ast.TaskListNode),
+		Symbol:    symbolToken.Type,
+		Indent:    indent,
+		Complete:  matchedTokens[indent+3].Value == "x",
+		Children:  children,
 	}, indent + len(contentTokens) + 6
 }

@@ -22,6 +22,7 @@ func (*EscapingCharacterParser) Match(tokens []*tokenizer.Token) (ast.Node, int)
 		return nil, 0
 	}
 	return &ast.EscapingCharacter{
-		Symbol: tokens[1].Value,
+		BaseInline: ast.NewBaseInline(ast.EscapingCharacterNode),
+		Symbol:     tokens[1].Value,
 	}, 2
 }

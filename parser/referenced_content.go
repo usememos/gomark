@@ -39,6 +39,7 @@ func (*ReferencedContentParser) Match(tokens []*tokenizer.Token) (ast.Node, int)
 		resourceName, params = tokenizer.Stringify(contentTokens[:questionMarkIndex]), tokenizer.Stringify(contentTokens[questionMarkIndex+1:])
 	}
 	return &ast.ReferencedContent{
+		BaseInline:   ast.NewBaseInline(ast.ReferencedContentNode),
 		ResourceName: resourceName,
 		Params:       params,
 	}, len(contentTokens) + 4

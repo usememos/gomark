@@ -25,6 +25,7 @@ func (*CodeParser) Match(tokens []*tokenizer.Token) (ast.Node, int) {
 	}
 	matchedTokens = matchedTokens[:1+nextBacktickIndex+1]
 	return &ast.Code{
-		Content: tokenizer.Stringify(matchedTokens[1 : len(matchedTokens)-1]),
+		BaseInline: ast.NewBaseInline(ast.CodeNode),
+		Content:    tokenizer.Stringify(matchedTokens[1 : len(matchedTokens)-1]),
 	}, len(matchedTokens)
 }

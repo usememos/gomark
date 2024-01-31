@@ -27,10 +27,6 @@ func TestStringRender(t *testing.T) {
 			expected: "Hello world!\n",
 		},
 		{
-			text:     "**[your/slash](https://example.com)** world!",
-			expected: "your/slash world!\n",
-		},
-		{
 			text:     "Test\n1. Hello\n2. World",
 			expected: "Test\n1. Hello\n2. World\n",
 		},

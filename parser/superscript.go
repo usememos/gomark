@@ -34,6 +34,7 @@ func (*SuperscriptParser) Match(tokens []*tokenizer.Token) (ast.Node, int) {
 	}
 
 	return &ast.Superscript{
-		Content: tokenizer.Stringify(contentTokens),
+		BaseInline: ast.NewBaseInline(ast.SuperscriptNode),
+		Content:    tokenizer.Stringify(contentTokens),
 	}, len(contentTokens) + 2
 }

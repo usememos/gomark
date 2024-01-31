@@ -26,6 +26,7 @@ func (*HorizontalRuleParser) Match(tokens []*tokenizer.Token) (ast.Node, int) {
 		return nil, 0
 	}
 	return &ast.HorizontalRule{
-		Symbol: matchedTokens[0].Type,
+		BaseBlock: ast.NewBaseBlock(ast.HorizontalRuleNode),
+		Symbol:    matchedTokens[0].Type,
 	}, 3
 }

@@ -49,7 +49,8 @@ func (*AutoLinkParser) Match(tokens []*tokenizer.Token) (ast.Node, int) {
 	}
 
 	return &ast.AutoLink{
-		URL:       urlStr,
-		IsRawText: isRawText,
+		BaseInline: ast.NewBaseInline(ast.AutoLinkNode),
+		URL:        urlStr,
+		IsRawText:  isRawText,
 	}, len(matchedTokens)
 }

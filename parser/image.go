@@ -50,7 +50,8 @@ func (*ImageParser) Match(tokens []*tokenizer.Token) (ast.Node, int) {
 	}
 
 	return &ast.Image{
-		AltText: tokenizer.Stringify(altTokens),
-		URL:     tokenizer.Stringify(contentTokens),
+		BaseInline: ast.NewBaseInline(ast.ImageNode),
+		AltText:    tokenizer.Stringify(altTokens),
+		URL:        tokenizer.Stringify(contentTokens),
 	}, 0
 }

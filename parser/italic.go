@@ -38,7 +38,8 @@ func (*ItalicParser) Match(tokens []*tokenizer.Token) (ast.Node, int) {
 	}
 
 	return &ast.Italic{
-		Symbol:  prefixTokenType,
-		Content: tokenizer.Stringify(contentTokens),
+		BaseInline: ast.NewBaseInline(ast.ItalicNode),
+		Symbol:     prefixTokenType,
+		Content:    tokenizer.Stringify(contentTokens),
 	}, len(contentTokens) + 2
 }

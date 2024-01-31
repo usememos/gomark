@@ -9,6 +9,14 @@ type BaseBlock struct {
 	BaseNode
 }
 
+func NewBaseBlock(nodeType NodeType) BaseBlock {
+	return BaseBlock{
+		BaseNode: BaseNode{
+			Type: nodeType,
+		},
+	}
+}
+
 type LineBreak struct {
 	BaseBlock
 }
@@ -24,7 +32,7 @@ func (*LineBreak) Restore() string {
 type Paragraph struct {
 	BaseBlock
 
-	Children []Node
+	Children []Node `json:"children"`
 }
 
 func (*Paragraph) Type() NodeType {
@@ -42,8 +50,8 @@ func (n *Paragraph) Restore() string {
 type CodeBlock struct {
 	BaseBlock
 
-	Language string
-	Content  string
+	Language string `json:"language"`
+	Content  string `json:"content"`
 }
 
 func (*CodeBlock) Type() NodeType {
@@ -57,8 +65,8 @@ func (n *CodeBlock) Restore() string {
 type Heading struct {
 	BaseBlock
 
-	Level    int
-	Children []Node
+	Level    int    `json:"level"`
+	Children []Node `json:"children"`
 }
 
 func (*Heading) Type() NodeType {
@@ -81,7 +89,7 @@ type HorizontalRule struct {
 	BaseBlock
 
 	// Symbol is "*" or "-" or "_".
-	Symbol string
+	Symbol string `json:"symbol"`
 }
 
 func (*HorizontalRule) Type() NodeType {
@@ -95,7 +103,7 @@ func (n *HorizontalRule) Restore() string {
 type Blockquote struct {
 	BaseBlock
 
-	Children []Node
+	Children []Node `json:"children"`
 }
 
 func (*Blockquote) Type() NodeType {
@@ -117,10 +125,10 @@ type OrderedList struct {
 	BaseBlock
 
 	// Number is the number of the list.
-	Number string
+	Number string `json:"number"`
 	// Indent is the number of spaces.
-	Indent   int
-	Children []Node
+	Indent   int    `json:"indent"`
+	Children []Node `json:"children"`
 }
 
 func (*OrderedList) Type() NodeType {
@@ -139,10 +147,10 @@ type UnorderedList struct {
 	BaseBlock
 
 	// Symbol is "*" or "-" or "+".
-	Symbol string
+	Symbol string `json:"symbol"`
 	// Indent is the number of spaces.
-	Indent   int
-	Children []Node
+	Indent   int    `json:"indent"`
+	Children []Node `json:"children"`
 }
 
 func (*UnorderedList) Type() NodeType {
@@ -161,11 +169,11 @@ type TaskList struct {
 	BaseBlock
 
 	// Symbol is "*" or "-" or "+".
-	Symbol string
+	Symbol string `json:"symbol"`
 	// Indent is the number of spaces.
-	Indent   int
-	Complete bool
-	Children []Node
+	Indent   int    `json:"indent"`
+	Complete bool   `json:"complete"`
+	Children []Node `json:"children"`
 }
 
 func (*TaskList) Type() NodeType {
@@ -187,7 +195,7 @@ func (n *TaskList) Restore() string {
 type MathBlock struct {
 	BaseBlock
 
-	Content string
+	Content string `json:"content"`
 }
 
 func (*MathBlock) Type() NodeType {
@@ -201,9 +209,9 @@ func (n *MathBlock) Restore() string {
 type Table struct {
 	BaseBlock
 
-	Header    []string
-	Delimiter []string
-	Rows      [][]string
+	Header    []string   `json:"header"`
+	Delimiter []string   `json:"delimiter"`
+	Rows      [][]string `json:"rows"`
 }
 
 func (*Table) Type() NodeType {
@@ -235,8 +243,8 @@ func (n *Table) Restore() string {
 type EmbeddedContent struct {
 	BaseBlock
 
-	ResourceName string
-	Params       string
+	ResourceName string `json:"resourceName"`
+	Params       string `json:"params"`
 }
 
 func (*EmbeddedContent) Type() NodeType {

@@ -1,39 +1,41 @@
 package ast
 
-type NodeType uint32
+type NodeType string
 
+// Block nodes.
 const (
-	UnknownNode NodeType = iota
-	// Block nodes.
-	LineBreakNode
-	ParagraphNode
-	CodeBlockNode
-	HeadingNode
-	HorizontalRuleNode
-	BlockquoteNode
-	OrderedListNode
-	UnorderedListNode
-	TaskListNode
-	MathBlockNode
-	TableNode
-	EmbeddedContentNode
-	// Inline nodes.
-	TextNode
-	BoldNode
-	ItalicNode
-	BoldItalicNode
-	CodeNode
-	ImageNode
-	LinkNode
-	AutoLinkNode
-	TagNode
-	StrikethroughNode
-	EscapingCharacterNode
-	MathNode
-	HighlightNode
-	SubscriptNode
-	SuperscriptNode
-	ReferencedContentNode
+	LineBreakNode       NodeType = "LineBreak"
+	ParagraphNode       NodeType = "Paragraph"
+	CodeBlockNode       NodeType = "CodeBlock"
+	HeadingNode         NodeType = "Heading"
+	HorizontalRuleNode  NodeType = "HorizontalRule"
+	BlockquoteNode      NodeType = "Blockquote"
+	OrderedListNode     NodeType = "OrderedList"
+	UnorderedListNode   NodeType = "UnorderedList"
+	TaskListNode        NodeType = "TaskList"
+	MathBlockNode       NodeType = "MathBlock"
+	TableNode           NodeType = "Table"
+	EmbeddedContentNode NodeType = "EmbeddedContent"
+)
+
+// Inline nodes.
+const (
+	TextNode              NodeType = "Text"
+	BoldNode              NodeType = "Bold"
+	ItalicNode            NodeType = "Italic"
+	BoldItalicNode        NodeType = "BoldItalic"
+	CodeNode              NodeType = "Code"
+	ImageNode             NodeType = "Image"
+	LinkNode              NodeType = "Link"
+	AutoLinkNode          NodeType = "AutoLink"
+	TagNode               NodeType = "Tag"
+	StrikethroughNode     NodeType = "Strikethrough"
+	EscapingCharacterNode NodeType = "EscapingCharacter"
+	MathNode              NodeType = "Math"
+	HighlightNode         NodeType = "Highlight"
+	SubscriptNode         NodeType = "Subscript"
+	SuperscriptNode       NodeType = "Superscript"
+	ReferencedContentNode NodeType = "ReferencedContent"
 )
 
 type Node interface {
@@ -57,6 +59,8 @@ type Node interface {
 }
 
 type BaseNode struct {
+	Type NodeType `json:"type"`
+
 	prevSibling Node
 
 	nextSibling Node

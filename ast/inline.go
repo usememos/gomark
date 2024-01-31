@@ -6,10 +6,18 @@ type BaseInline struct {
 	BaseNode
 }
 
+func NewBaseInline(nodeType NodeType) BaseInline {
+	return BaseInline{
+		BaseNode: BaseNode{
+			Type: nodeType,
+		},
+	}
+}
+
 type Text struct {
 	BaseInline
 
-	Content string
+	Content string `json:"content"`
 }
 
 func (*Text) Type() NodeType {
@@ -24,8 +32,8 @@ type Bold struct {
 	BaseInline
 
 	// Symbol is "*" or "_".
-	Symbol   string
-	Children []Node
+	Symbol   string `json:"symbol"`
+	Children []Node `json:"children"`
 }
 
 func (*Bold) Type() NodeType {
@@ -45,8 +53,8 @@ type Italic struct {
 	BaseInline
 
 	// Symbol is "*" or "_".
-	Symbol  string
-	Content string
+	Symbol  string `json:"symbol"`
+	Content string `json:"content"`
 }
 
 func (*Italic) Type() NodeType {
@@ -61,8 +69,8 @@ type BoldItalic struct {
 	BaseInline
 
 	// Symbol is "*" or "_".
-	Symbol  string
-	Content string
+	Symbol  string `json:"symbol"`
+	Content string `json:"content"`
 }
 
 func (*BoldItalic) Type() NodeType {
@@ -77,7 +85,7 @@ func (n *BoldItalic) Restore() string {
 type Code struct {
 	BaseInline
 
-	Content string
+	Content string `json:"content"`
 }
 
 func (*Code) Type() NodeType {
@@ -91,8 +99,8 @@ func (n *Code) Restore() string {
 type Image struct {
 	BaseInline
 
-	AltText string
-	URL     string
+	AltText string `json:"altText"`
+	URL     string `json:"url"`
 }
 
 func (*Image) Type() NodeType {
@@ -106,8 +114,8 @@ func (n *Image) Restore() string {
 type Link struct {
 	BaseInline
 
-	Text string
-	URL  string
+	Text string `json:"text"`
+	URL  string `json:"url"`
 }
 
 func (*Link) Type() NodeType {
@@ -121,8 +129,8 @@ func (n *Link) Restore() string {
 type AutoLink struct {
 	BaseInline
 
-	URL       string
-	IsRawText bool
+	URL       string `json:"url"`
+	IsRawText bool   `json:"isRawText"`
 }
 
 func (*AutoLink) Type() NodeType {
@@ -139,7 +147,7 @@ func (n *AutoLink) Restore() string {
 type Tag struct {
 	BaseInline
 
-	Content string
+	Content string `json:"content"`
 }
 
 func (*Tag) Type() NodeType {
@@ -153,7 +161,7 @@ func (n *Tag) Restore() string {
 type Strikethrough struct {
 	BaseInline
 
-	Content string
+	Content string `json:"content"`
 }
 
 func (*Strikethrough) Type() NodeType {
@@ -167,7 +175,7 @@ func (n *Strikethrough) Restore() string {
 type EscapingCharacter struct {
 	BaseInline
 
-	Symbol string
+	Symbol string `json:"symbol"`
 }
 
 func (*EscapingCharacter) Type() NodeType {
@@ -181,7 +189,7 @@ func (n *EscapingCharacter) Restore() string {
 type Math struct {
 	BaseInline
 
-	Content string
+	Content string `json:"content"`
 }
 
 func (*Math) Type() NodeType {
@@ -195,7 +203,7 @@ func (n *Math) Restore() string {
 type Highlight struct {
 	BaseInline
 
-	Content string
+	Content string `json:"content"`
 }
 
 func (*Highlight) Type() NodeType {
@@ -209,7 +217,7 @@ func (n *Highlight) Restore() string {
 type Subscript struct {
 	BaseInline
 
-	Content string
+	Content string `json:"content"`
 }
 
 func (*Subscript) Type() NodeType {
@@ -223,7 +231,7 @@ func (n *Subscript) Restore() string {
 type Superscript struct {
 	BaseInline
 
-	Content string
+	Content string `json:"content"`
 }
 
 func (*Superscript) Type() NodeType {
@@ -237,8 +245,8 @@ func (n *Superscript) Restore() string {
 type ReferencedContent struct {
 	BaseInline
 
-	ResourceName string
-	Params       string
+	ResourceName string `json:"resourceName"`
+	Params       string `json:"params"`
 }
 
 func (*ReferencedContent) Type() NodeType {

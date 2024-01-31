@@ -18,6 +18,7 @@ func (*TextParser) Match(tokens []*tokenizer.Token) (ast.Node, int) {
 		return nil, 0
 	}
 	return &ast.Text{
-		Content: tokens[0].String(),
+		BaseInline: ast.NewBaseInline(ast.TextNode),
+		Content:    tokens[0].String(),
 	}, 1
 }

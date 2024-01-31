@@ -34,6 +34,7 @@ func (*MathParser) Match(tokens []*tokenizer.Token) (ast.Node, int) {
 		return nil, 0
 	}
 	return &ast.Math{
-		Content: tokenizer.Stringify(contentTokens),
+		BaseInline: ast.NewBaseInline(ast.MathNode),
+		Content:    tokenizer.Stringify(contentTokens),
 	}, len(contentTokens) + 2
 }

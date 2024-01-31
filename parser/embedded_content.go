@@ -37,6 +37,7 @@ func (*EmbeddedContentParser) Match(tokens []*tokenizer.Token) (ast.Node, int) {
 		resourceName, params = tokenizer.Stringify(contentTokens[:questionMarkIndex]), tokenizer.Stringify(contentTokens[questionMarkIndex+1:])
 	}
 	return &ast.EmbeddedContent{
+		BaseBlock:    ast.NewBaseBlock(ast.EmbeddedContentNode),
 		ResourceName: resourceName,
 		Params:       params,
 	}, len(matchedTokens)

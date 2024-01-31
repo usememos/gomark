@@ -39,8 +39,9 @@ func (*UnorderedListParser) Match(tokens []*tokenizer.Token) (ast.Node, int) {
 		return nil, 0
 	}
 	return &ast.UnorderedList{
-		Symbol:   symbolToken.Type,
-		Indent:   indent,
-		Children: children,
+		BaseBlock: ast.NewBaseBlock(ast.UnorderedListNode),
+		Symbol:    symbolToken.Type,
+		Indent:    indent,
+		Children:  children,
 	}, indent + len(contentTokens) + 2
 }

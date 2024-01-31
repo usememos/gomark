@@ -131,11 +131,10 @@ func (r *StringRenderer) renderHeading(node *ast.Heading) {
 }
 
 func (r *StringRenderer) renderHorizontalRule(_ *ast.HorizontalRule) {
-	r.output.WriteString("\n---\n")
+	r.output.WriteString("\n")
 }
 
 func (r *StringRenderer) renderBlockquote(node *ast.Blockquote) {
-	r.output.WriteString("\n")
 	r.RenderNodes(node.Children)
 	r.output.WriteString("\n")
 }
@@ -213,7 +212,7 @@ func (r *StringRenderer) renderImage(node *ast.Image) {
 }
 
 func (r *StringRenderer) renderLink(node *ast.Link) {
-	r.output.WriteString(node.Text)
+	r.output.WriteString(node.URL)
 }
 
 func (r *StringRenderer) renderAutoLink(node *ast.AutoLink) {

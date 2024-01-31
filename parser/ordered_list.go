@@ -40,8 +40,9 @@ func (*OrderedListParser) Match(tokens []*tokenizer.Token) (ast.Node, int) {
 		return nil, 0
 	}
 	return &ast.OrderedList{
-		Number:   matchedTokens[indent].Value,
-		Indent:   indent,
-		Children: children,
+		BaseBlock: ast.NewBaseBlock(ast.OrderedListNode),
+		Number:    matchedTokens[indent].Value,
+		Indent:    indent,
+		Children:  children,
 	}, indent + 3 + len(contentTokens)
 }

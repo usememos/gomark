@@ -114,6 +114,7 @@ func (*TableParser) Match(tokens []*tokenizer.Token) (ast.Node, int) {
 	size = size + len(rows) - 1
 
 	return &ast.Table{
+		BaseBlock: ast.NewBaseBlock(ast.TableNode),
 		Header:    header,
 		Delimiter: delimiter,
 		Rows:      rowsStr,

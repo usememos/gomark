@@ -66,7 +66,8 @@ func (*CodeBlockParser) Match(tokens []*tokenizer.Token) (ast.Node, int) {
 	}
 
 	return &ast.CodeBlock{
-		Content:  tokenizer.Stringify(contentTokens),
-		Language: tokenizer.Stringify(languageTokens),
+		BaseBlock: ast.NewBaseBlock(ast.CodeBlockNode),
+		Content:   tokenizer.Stringify(contentTokens),
+		Language:  tokenizer.Stringify(languageTokens),
 	}, 4 + len(languageTokens) + len(contentTokens) + 4
 }

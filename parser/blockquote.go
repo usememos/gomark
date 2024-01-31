@@ -44,6 +44,7 @@ func (*BlockquoteParser) Match(tokens []*tokenizer.Token) (ast.Node, int) {
 	}
 
 	return &ast.Blockquote{
-		Children: children,
+		BaseBlock: ast.NewBaseBlock(ast.BlockquoteNode),
+		Children:  children,
 	}, size
 }

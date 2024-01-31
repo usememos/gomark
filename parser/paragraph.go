@@ -24,6 +24,7 @@ func (*ParagraphParser) Match(tokens []*tokenizer.Token) (ast.Node, int) {
 		return nil, 0
 	}
 	return &ast.Paragraph{
-		Children: children,
+		BaseBlock: ast.NewBaseBlock(ast.ParagraphNode),
+		Children:  children,
 	}, len(matchedTokens)
 }
