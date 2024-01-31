@@ -1,39 +1,41 @@
 package ast
 
-type NodeType uint32
+type NodeType string
 
+// Block nodes.
 const (
-	UnknownNode NodeType = iota
-	// Block nodes.
-	LineBreakNode
-	ParagraphNode
-	CodeBlockNode
-	HeadingNode
-	HorizontalRuleNode
-	BlockquoteNode
-	OrderedListNode
-	UnorderedListNode
-	TaskListNode
-	MathBlockNode
-	TableNode
-	EmbeddedContentNode
-	// Inline nodes.
-	TextNode
-	BoldNode
-	ItalicNode
-	BoldItalicNode
-	CodeNode
-	ImageNode
-	LinkNode
-	AutoLinkNode
-	TagNode
-	StrikethroughNode
-	EscapingCharacterNode
-	MathNode
-	HighlightNode
-	SubscriptNode
-	SuperscriptNode
-	ReferencedContentNode
+	LineBreakNode       NodeType = "LINE_BREAK"
+	ParagraphNode       NodeType = "PARAGRAPH"
+	CodeBlockNode       NodeType = "CODE_BLOCK"
+	HeadingNode         NodeType = "HEADING"
+	HorizontalRuleNode  NodeType = "HORIZONTAL_RULE"
+	BlockquoteNode      NodeType = "BLOCKQUOTE"
+	OrderedListNode     NodeType = "ORDERED_LIST"
+	UnorderedListNode   NodeType = "UNORDERED_LIST"
+	TaskListNode        NodeType = "TASK_LIST"
+	MathBlockNode       NodeType = "MATH_BLOCK"
+	TableNode           NodeType = "TABLE"
+	EmbeddedContentNode NodeType = "EMBEDDED_CONTENT"
+)
+
+// Inline nodes.
+const (
+	TextNode              NodeType = "TEXT"
+	BoldNode              NodeType = "BOLD"
+	ItalicNode            NodeType = "ITALIC"
+	BoldItalicNode        NodeType = "BOLD_ITALIC"
+	CodeNode              NodeType = "CODE"
+	ImageNode             NodeType = "IMAGE"
+	LinkNode              NodeType = "LINK"
+	AutoLinkNode          NodeType = "AUTO_LINK"
+	TagNode               NodeType = "TAG"
+	StrikethroughNode     NodeType = "STRIKETHROUGH"
+	EscapingCharacterNode NodeType = "ESCAPING_CHARACTER"
+	MathNode              NodeType = "MATH"
+	HighlightNode         NodeType = "HIGHLIGHT"
+	SubscriptNode         NodeType = "SUBSCRIPT"
+	SuperscriptNode       NodeType = "SUPERSCRIPT"
+	ReferencedContentNode NodeType = "REFERENCED_CONTENT"
 )
 
 type Node interface {
