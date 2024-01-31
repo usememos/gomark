@@ -1,6 +1,6 @@
 package restore
 
-import "github.com/usememos/gomark/ast"
+import "github.com/yourselfhosted/gomark/ast"
 
 func Restore(nodes []ast.Node) string {
 	var result string

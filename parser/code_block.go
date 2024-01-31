@@ -3,8 +3,8 @@ package parser
 import (
 	"slices"
 
-	"github.com/usememos/gomark/ast"
-	"github.com/usememos/gomark/parser/tokenizer"
+	"github.com/yourselfhosted/gomark/ast"
+	"github.com/yourselfhosted/gomark/parser/tokenizer"
 )
 
 type CodeBlockParser struct {

@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/usememos/gomark/ast"
-	nodepb "github.com/usememos/gomark/proto/gen/node/v1"
+	"github.com/yourselfhosted/gomark/ast"
+	nodepb "github.com/yourselfhosted/gomark/proto/gen/node/v1"
 )
 
 func ConvertFromASTNodes(rawNodes []ast.Node) []*nodepb.Node {

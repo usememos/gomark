@@ -1,8 +1,8 @@
 package parser
 
 import (
-	"github.com/usememos/gomark/ast"
-	"github.com/usememos/gomark/parser/tokenizer"
+	"github.com/yourselfhosted/gomark/ast"
+	"github.com/yourselfhosted/gomark/parser/tokenizer"
 )
 
 type SuperscriptParser struct{}

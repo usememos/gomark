@@ -5,9 +5,9 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/usememos/gomark/ast"
-	"github.com/usememos/gomark/parser/tokenizer"
-	"github.com/usememos/gomark/restore"
+	"github.com/yourselfhosted/gomark/ast"
+	"github.com/yourselfhosted/gomark/parser/tokenizer"
+	"github.com/yourselfhosted/gomark/restore"
 )
 
 func TestCodeParser(t *testing.T) {

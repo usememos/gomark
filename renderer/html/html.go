@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"fmt"
 
-	"github.com/usememos/gomark/ast"
+	"github.com/yourselfhosted/gomark/ast"
 )
 
 // HTMLRenderer is a simple renderer that converts AST to HTML.

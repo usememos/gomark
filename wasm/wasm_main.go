@@ -6,10 +6,10 @@ import (
 
 	"google.golang.org/protobuf/encoding/protojson"
 
-	"github.com/usememos/gomark/parser"
-	"github.com/usememos/gomark/parser/tokenizer"
-	nodepb "github.com/usememos/gomark/proto/gen/node/v1"
-	"github.com/usememos/gomark/restore"
+	"github.com/yourselfhosted/gomark/parser"
+	"github.com/yourselfhosted/gomark/parser/tokenizer"
+	nodepb "github.com/yourselfhosted/gomark/proto/gen/node/v1"
+	"github.com/yourselfhosted/gomark/restore"
 )
 
 // Parse converts markdown to nodes.

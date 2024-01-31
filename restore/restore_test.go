@@ -5,7 +5,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/usememos/gomark/ast"
+	"github.com/yourselfhosted/gomark/ast"
 )
 
 func TestRestore(t *testing.T) {
