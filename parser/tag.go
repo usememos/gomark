@@ -32,7 +32,6 @@ func (*TagParser) Match(tokens []*tokenizer.Token) (ast.Node, int) {
 	}
 
 	return &ast.Tag{
-		BaseInline: ast.NewBaseInline(ast.TagNode),
-		Content:    tokenizer.Stringify(contentTokens),
+		Content: tokenizer.Stringify(contentTokens),
 	}, len(contentTokens) + 1
 }

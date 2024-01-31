@@ -34,7 +34,6 @@ func (*SubscriptParser) Match(tokens []*tokenizer.Token) (ast.Node, int) {
 	}
 
 	return &ast.Subscript{
-		BaseInline: ast.NewBaseInline(ast.SubscriptNode),
-		Content:    tokenizer.Stringify(contentTokens),
+		Content: tokenizer.Stringify(contentTokens),
 	}, len(contentTokens) + 2
 }

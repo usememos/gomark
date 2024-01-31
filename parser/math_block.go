@@ -48,7 +48,6 @@ func (*MathBlockParser) Match(tokens []*tokenizer.Token) (ast.Node, int) {
 		}
 	}
 	return &ast.MathBlock{
-		BaseBlock: ast.NewBaseBlock(ast.MathBlockNode),
-		Content:   tokenizer.Stringify(contentTokens),
+		Content: tokenizer.Stringify(contentTokens),
 	}, 3 + len(contentTokens) + 3
 }

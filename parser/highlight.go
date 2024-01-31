@@ -39,7 +39,6 @@ func (*HighlightParser) Match(tokens []*tokenizer.Token) (ast.Node, int) {
 	}
 
 	return &ast.Highlight{
-		BaseInline: ast.NewBaseInline(ast.HighlightNode),
-		Content:    tokenizer.Stringify(matchedToken[2:cursor]),
+		Content: tokenizer.Stringify(matchedToken[2:cursor]),
 	}, cursor + 2
 }

@@ -34,7 +34,6 @@ func (*StrikethroughParser) Match(tokens []*tokenizer.Token) (ast.Node, int) {
 		return nil, 0
 	}
 	return &ast.Strikethrough{
-		BaseInline: ast.NewBaseInline(ast.StrikethroughNode),
-		Content:    tokenizer.Stringify(contentTokens),
+		Content: tokenizer.Stringify(contentTokens),
 	}, len(contentTokens) + 4
 }

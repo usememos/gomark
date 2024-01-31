@@ -48,8 +48,7 @@ func (*BoldParser) Match(tokens []*tokenizer.Token) (ast.Node, int) {
 		return nil, 0
 	}
 	return &ast.Bold{
-		BaseInline: ast.NewBaseInline(ast.BoldNode),
-		Symbol:     prefixTokenType,
-		Children:   children,
+		Symbol:   prefixTokenType,
+		Children: children,
 	}, size
 }

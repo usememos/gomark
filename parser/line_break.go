@@ -18,7 +18,5 @@ func (*LineBreakParser) Match(tokens []*tokenizer.Token) (ast.Node, int) {
 	if tokens[0].Type != tokenizer.NewLine {
 		return nil, 0
 	}
-	return &ast.LineBreak{
-		BaseBlock: ast.NewBaseBlock(ast.LineBreakNode),
-	}, 1
+	return &ast.LineBreak{}, 1
 }

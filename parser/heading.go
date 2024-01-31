@@ -38,8 +38,7 @@ func (*HeadingParser) Match(tokens []*tokenizer.Token) (ast.Node, int) {
 	}
 
 	return &ast.Heading{
-		BaseBlock: ast.NewBaseBlock(ast.HeadingNode),
-		Level:     level,
-		Children:  children,
+		Level:    level,
+		Children: children,
 	}, len(contentTokens) + level + 1
 }
