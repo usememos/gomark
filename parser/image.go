@@ -34,7 +34,7 @@ func (*ImageParser) Match(tokens []*tokenizer.Token) (ast.Node, int) {
 	}
 
 	cursor += 2
-	contentTokens, matched := []*tokenizer.Token{}, false
+	urlTokens, matched := []*tokenizer.Token{}, false
 	for _, token := range matchedTokens[cursor:] {
 		if token.Type == tokenizer.Space {
 			return nil, 0
@@ -43,14 +43,14 @@ func (*ImageParser) Match(tokens []*tokenizer.Token) (ast.Node, int) {
 			matched = true
 			break
 		}
-		contentTokens = append(contentTokens, token)
+		urlTokens = append(urlTokens, token)
 	}
-	if !matched || len(contentTokens) == 0 {
+	if !matched || len(urlTokens) == 0 {
 		return nil, 0
 	}
 
 	return &ast.Image{
 		AltText: tokenizer.Stringify(altTokens),
-		URL:     tokenizer.Stringify(contentTokens),
-	}, 0
+		URL:     tokenizer.Stringify(urlTokens),
+	}, 5 + len(altTokens) + len(urlTokens)
 }

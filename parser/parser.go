@@ -46,7 +46,7 @@ func ParseBlockWithParsers(tokens []*tokenizer.Token, blockParsers []BlockParser
 	for len(tokens) > 0 {
 		for _, blockParser := range blockParsers {
 			node, size := blockParser.Match(tokens)
-			if node != nil {
+			if node != nil && size != 0 {
 				// Consume matched tokens.
 				tokens = tokens[size:]
 				if prevNode != nil {
@@ -92,7 +92,7 @@ func ParseInlineWithParsers(tokens []*tokenizer.Token, inlineParsers []InlinePar
 	for len(tokens) > 0 {
 		for _, inlineParser := range inlineParsers {
 			node, size := inlineParser.Match(tokens)
-			if node != nil {
+			if node != nil && size != 0 {
 				// Consume matched tokens.
 				tokens = tokens[size:]
 				if prevNode != nil {

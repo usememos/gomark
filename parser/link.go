@@ -33,22 +33,23 @@ func (*LinkParser) Match(tokens []*tokenizer.Token) (ast.Node, int) {
 	if matchedTokens[2+len(textTokens)].Type != tokenizer.LeftParenthesis {
 		return nil, 0
 	}
-	urlTokens := []*tokenizer.Token{}
+	urlTokens, matched := []*tokenizer.Token{}, false
 	for _, token := range matchedTokens[3+len(textTokens):] {
 		if token.Type == tokenizer.Space {
 			return nil, 0
 		}
 		if token.Type == tokenizer.RightParenthesis {
+			matched = true
 			break
 		}
 		urlTokens = append(urlTokens, token)
 	}
-	if 4+len(urlTokens)+len(textTokens) > len(matchedTokens) {
+	if !matched || len(urlTokens) == 0 {
 		return nil, 0
 	}
 
 	return &ast.Link{
 		Text: tokenizer.Stringify(textTokens),
 		URL:  tokenizer.Stringify(urlTokens),
-	}, 4 + len(urlTokens) + len(textTokens)
+	}, 4 + len(textTokens) + len(urlTokens)
 }
