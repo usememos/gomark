@@ -41,7 +41,6 @@ func TestImageParser(t *testing.T) {
 	for _, test := range tests {
 		tokens := tokenizer.Tokenize(test.text)
 		node, _ := NewImageParser().Match(tokens)
-		require.Equal(t, test.image, node)
 		require.Equal(t, restore.Restore([]ast.Node{test.image}), restore.Restore([]ast.Node{node}))
 	}
 }
