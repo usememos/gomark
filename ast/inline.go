@@ -253,3 +253,17 @@ func (n *ReferencedContent) Restore() string {
 	result := fmt.Sprintf("[[%s%s]]", n.ResourceName, params)
 	return result
 }
+
+type Spoiler struct {
+	BaseInline
+
+	Content string
+}
+
+func (*Spoiler) Type() NodeType {
+	return SpoilerNode
+}
+
+func (n *Spoiler) Restore() string {
+	return fmt.Sprintf("||%s||", n.Content)
+}

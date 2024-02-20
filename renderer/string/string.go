@@ -83,6 +83,8 @@ func (r *StringRenderer) RenderNode(node ast.Node) {
 		r.renderSuperscript(n)
 	case *ast.ReferencedContent:
 		r.renderReferencedContent(n)
+	case *ast.Spoiler:
+		r.renderSpoiler(n)
 	default:
 		// Handle other block types if needed.
 	}
@@ -255,4 +257,8 @@ func (r *StringRenderer) renderReferencedContent(node *ast.ReferencedContent) {
 		r.output.WriteString("?")
 		r.output.WriteString(node.Params)
 	}
+}
+
+func (r *StringRenderer) renderSpoiler(node *ast.Spoiler) {
+	r.output.WriteString(node.Content)
 }

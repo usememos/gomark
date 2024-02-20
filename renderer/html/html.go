@@ -83,6 +83,8 @@ func (r *HTMLRenderer) RenderNode(node ast.Node) {
 		r.renderSuperscript(n)
 	case *ast.ReferencedContent:
 		r.renderReferencedContent(n)
+	case *ast.Spoiler:
+		r.renderSpoiler(n)
 	default:
 		// Handle other block types if needed.
 	}
@@ -332,4 +334,10 @@ func (r *HTMLRenderer) renderReferencedContent(node *ast.ReferencedContent) {
 		r.output.WriteString(node.Params)
 	}
 	r.output.WriteString("</div>")
+}
+
+func (r *HTMLRenderer) renderSpoiler(node *ast.Spoiler) {
+	r.output.WriteString("<details><summary>")
+	r.output.WriteString(node.Content)
+	r.output.WriteString("</summary></details>")
 }

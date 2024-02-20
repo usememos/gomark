@@ -70,6 +70,7 @@ var defaultInlineParsers = []InlineParser{
 	NewAutoLinkParser(),
 	NewBoldParser(),
 	NewItalicParser(),
+	NewSpoilerParser(),
 	NewHighlightParser(),
 	NewCodeParser(),
 	NewSubscriptParser(),
