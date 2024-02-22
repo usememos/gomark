@@ -36,7 +36,6 @@ func (*HeadingParser) Match(tokens []*tokenizer.Token) (ast.Node, int) {
 	if err != nil {
 		return nil, 0
 	}
-
 	return &ast.Heading{
 		Level:    level,
 		Children: children,

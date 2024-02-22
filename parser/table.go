@@ -94,15 +94,27 @@ func (*TableParser) Match(tokens []*tokenizer.Token) (ast.Node, int) {
 
 	cols := len(tokenizer.Split(headerTokens, tokenizer.Pipe)) - 2
 	for _, t := range tokenizer.Split(headerTokens, tokenizer.Pipe)[1 : cols+1] {
-		header = append(header, tokenizer.Stringify(t[1:len(t)-1]))
+		if len(t) < 3 {
+			header = append(header, "")
+		} else {
+			header = append(header, tokenizer.Stringify(t[1:len(t)-1]))
+		}
 	}
 	for _, t := range tokenizer.Split(delimiterTokens, tokenizer.Pipe)[1 : cols+1] {
-		delimiter = append(delimiter, tokenizer.Stringify(t[1:len(t)-1]))
+		if len(t) < 3 {
+			delimiter = append(delimiter, "")
+		} else {
+			delimiter = append(delimiter, tokenizer.Stringify(t[1:len(t)-1]))
+		}
 	}
 	for _, row := range rows {
 		cells := make([]string, 0)
 		for _, t := range tokenizer.Split(row, tokenizer.Pipe)[1 : cols+1] {
-			cells = append(cells, tokenizer.Stringify(t[1:len(t)-1]))
+			if len(t) < 3 {
+				cells = append(cells, "")
+			} else {
+				cells = append(cells, tokenizer.Stringify(t[1:len(t)-1]))
+			}
 		}
 		rowsStr = append(rowsStr, cells)
 	}

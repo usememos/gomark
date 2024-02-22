@@ -20,6 +20,10 @@ func TestBoldParser(t *testing.T) {
 			bold: nil,
 		},
 		{
+			text: "****",
+			bold: nil,
+		},
+		{
 			text: "**Hello**",
 			bold: &ast.Bold{
 				Symbol: "*",

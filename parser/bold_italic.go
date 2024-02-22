@@ -42,8 +42,13 @@ func (*BoldItalicParser) Match(tokens []*tokenizer.Token) (ast.Node, int) {
 	}
 
 	size := len(matchedTokens)
+	contentTokens := matchedTokens[3 : size-3]
+	if len(contentTokens) == 0 {
+		return nil, 0
+	}
+
 	return &ast.BoldItalic{
 		Symbol:  prefixTokenType,
-		Content: tokenizer.Stringify(matchedTokens[3 : size-3]),
+		Content: tokenizer.Stringify(contentTokens),
 	}, size
 }

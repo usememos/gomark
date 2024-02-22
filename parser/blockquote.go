@@ -42,7 +42,9 @@ func (*BlockquoteParser) Match(tokens []*tokenizer.Token) (ast.Node, int) {
 			size++ // NewLine.
 		}
 	}
-
+	if len(children) == 0 {
+		return nil, 0
+	}
 	return &ast.Blockquote{
 		Children: children,
 	}, size

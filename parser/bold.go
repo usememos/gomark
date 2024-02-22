@@ -44,7 +44,7 @@ func (*BoldParser) Match(tokens []*tokenizer.Token) (ast.Node, int) {
 
 	size := len(matchedTokens)
 	children, err := ParseInlineWithParsers(matchedTokens[2:size-2], []InlineParser{NewLinkParser(), NewTextParser()})
-	if err != nil {
+	if err != nil || len(children) == 0 {
 		return nil, 0
 	}
 	return &ast.Bold{

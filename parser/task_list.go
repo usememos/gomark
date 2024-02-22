@@ -43,7 +43,6 @@ func (*TaskListParser) Match(tokens []*tokenizer.Token) (ast.Node, int) {
 	if len(contentTokens) == 0 {
 		return nil, 0
 	}
-
 	children, err := ParseInline(contentTokens)
 	if err != nil {
 		return nil, 0
