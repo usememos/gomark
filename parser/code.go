@@ -24,7 +24,11 @@ func (*CodeParser) Match(tokens []*tokenizer.Token) (ast.Node, int) {
 		return nil, 0
 	}
 	matchedTokens = matchedTokens[:1+nextBacktickIndex+1]
+	contentTokens := matchedTokens[1 : len(matchedTokens)-1]
+	if len(contentTokens) == 0 {
+		return nil, 0
+	}
 	return &ast.Code{
-		Content: tokenizer.Stringify(matchedTokens[1 : len(matchedTokens)-1]),
+		Content: tokenizer.Stringify(contentTokens),
 	}, len(matchedTokens)
 }
