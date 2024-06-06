@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"fmt"
 
-	"github.com/yourselfhosted/gomark/ast"
+	"github.com/usememos/gomark/ast"
 )
 
 // StringRenderer renders AST to raw string.

@@ -1,8 +1,8 @@
 package renderer
 
 import (
-	htmlrenderer "github.com/yourselfhosted/gomark/renderer/html"
-	stringrenderer "github.com/yourselfhosted/gomark/renderer/string"
+	htmlrenderer "github.com/usememos/gomark/renderer/html"
+	stringrenderer "github.com/usememos/gomark/renderer/string"
 )
 
 func NewHTMLRenderer() *htmlrenderer.HTMLRenderer {
