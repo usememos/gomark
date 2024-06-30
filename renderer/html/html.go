@@ -7,13 +7,13 @@ import (
 	"github.com/usememos/gomark/ast"
 )
 
+type RendererContext struct {
+}
+
 // HTMLRenderer is a simple renderer that converts AST to HTML.
 type HTMLRenderer struct {
 	output  *bytes.Buffer
 	context *RendererContext
-}
-
-type RendererContext struct {
 }
 
 // NewHTMLRenderer creates a new HTMLRender.

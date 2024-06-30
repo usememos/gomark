@@ -7,13 +7,13 @@ import (
 	"github.com/usememos/gomark/ast"
 )
 
+type RendererContext struct {
+}
+
 // StringRenderer renders AST to raw string.
 type StringRenderer struct {
 	output  *bytes.Buffer
 	context *RendererContext
-}
-
-type RendererContext struct {
 }
 
 // NewStringRenderer creates a new StringRender.
@@ -180,11 +180,6 @@ func (r *StringRenderer) renderTable(node *ast.Table) {
 }
 
 func (r *StringRenderer) renderEmbeddedContent(node *ast.EmbeddedContent) {
-	r.output.WriteString(node.ResourceName)
-	if node.Params != "" {
-		r.output.WriteString("?")
-		r.output.WriteString(node.Params)
-	}
 }
 
 func (r *StringRenderer) renderText(node *ast.Text) {
@@ -204,13 +199,10 @@ func (r *StringRenderer) renderBoldItalic(node *ast.BoldItalic) {
 }
 
 func (r *StringRenderer) renderCode(node *ast.Code) {
-	r.output.WriteString("`")
 	r.output.WriteString(node.Content)
-	r.output.WriteString("`")
 }
 
 func (r *StringRenderer) renderImage(node *ast.Image) {
-	r.output.WriteString(node.AltText)
 }
 
 func (r *StringRenderer) renderLink(node *ast.Link) {
@@ -252,11 +244,6 @@ func (r *StringRenderer) renderSuperscript(node *ast.Superscript) {
 }
 
 func (r *StringRenderer) renderReferencedContent(node *ast.ReferencedContent) {
-	r.output.WriteString(node.ResourceName)
-	if node.Params != "" {
-		r.output.WriteString("?")
-		r.output.WriteString(node.Params)
-	}
 }
 
 func (r *StringRenderer) renderSpoiler(node *ast.Spoiler) {
