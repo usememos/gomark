@@ -179,8 +179,7 @@ func (r *StringRenderer) renderTable(node *ast.Table) {
 	}
 }
 
-func (r *StringRenderer) renderEmbeddedContent(node *ast.EmbeddedContent) {
-}
+func (*StringRenderer) renderEmbeddedContent(_ *ast.EmbeddedContent) {}
 
 func (r *StringRenderer) renderText(node *ast.Text) {
 	r.output.WriteString(node.Content)
@@ -202,8 +201,7 @@ func (r *StringRenderer) renderCode(node *ast.Code) {
 	r.output.WriteString(node.Content)
 }
 
-func (r *StringRenderer) renderImage(node *ast.Image) {
-}
+func (*StringRenderer) renderImage(_ *ast.Image) {}
 
 func (r *StringRenderer) renderLink(node *ast.Link) {
 	r.output.WriteString(node.URL)
@@ -243,8 +241,7 @@ func (r *StringRenderer) renderSuperscript(node *ast.Superscript) {
 	r.output.WriteString(node.Content)
 }
 
-func (r *StringRenderer) renderReferencedContent(node *ast.ReferencedContent) {
-}
+func (*StringRenderer) renderReferencedContent(_ *ast.ReferencedContent) {}
 
 func (r *StringRenderer) renderSpoiler(node *ast.Spoiler) {
 	r.output.WriteString(node.Content)
