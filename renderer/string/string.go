@@ -166,13 +166,13 @@ func (r *StringRenderer) renderMathBlock(node *ast.MathBlock) {
 
 func (r *StringRenderer) renderTable(node *ast.Table) {
 	for _, cell := range node.Header {
-		r.output.WriteString(cell)
+		r.RenderNodes([]ast.Node{cell})
 		r.output.WriteString("\t")
 	}
 	r.output.WriteString("\n")
 	for _, row := range node.Rows {
 		for _, cell := range row {
-			r.output.WriteString(cell)
+			r.RenderNodes([]ast.Node{cell})
 			r.output.WriteString("\t")
 		}
 		r.output.WriteString("\n")

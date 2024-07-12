@@ -201,9 +201,9 @@ func (n *MathBlock) Restore() string {
 type Table struct {
 	BaseBlock
 
-	Header    []string
+	Header    []Node
 	Delimiter []string
-	Rows      [][]string
+	Rows      [][]Node
 }
 
 func (*Table) Type() NodeType {
@@ -213,7 +213,7 @@ func (*Table) Type() NodeType {
 func (n *Table) Restore() string {
 	result := ""
 	for _, header := range n.Header {
-		result += fmt.Sprintf("| %s ", header)
+		result += fmt.Sprintf("| %s ", header.Restore())
 	}
 	result += "|\n"
 	for _, d := range n.Delimiter {
@@ -222,7 +222,7 @@ func (n *Table) Restore() string {
 	result += "|\n"
 	for index, row := range n.Rows {
 		for _, cell := range row {
-			result += fmt.Sprintf("| %s ", cell)
+			result += fmt.Sprintf("| %s ", cell.Restore())
 		}
 		result += "|"
 		if index != len(n.Rows)-1 {

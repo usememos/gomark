@@ -203,7 +203,7 @@ func (r *HTMLRenderer) renderTable(node *ast.Table) {
 	r.output.WriteString("<tr>")
 	for _, cell := range node.Header {
 		r.output.WriteString("<th>")
-		r.output.WriteString(cell)
+		r.RenderNodes([]ast.Node{cell})
 		r.output.WriteString("</th>")
 	}
 	r.output.WriteString("</tr>")
@@ -213,7 +213,7 @@ func (r *HTMLRenderer) renderTable(node *ast.Table) {
 		r.output.WriteString("<tr>")
 		for _, cell := range row {
 			r.output.WriteString("<td>")
-			r.output.WriteString(cell)
+			r.RenderNodes([]ast.Node{cell})
 			r.output.WriteString("</td>")
 		}
 		r.output.WriteString("</tr>")

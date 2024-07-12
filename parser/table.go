@@ -88,16 +88,24 @@ func (*TableParser) Match(tokens []*tokenizer.Token) (ast.Node, int) {
 	}
 	rows = rows[:matchedRows]
 
-	header := make([]string, 0)
+	headerNodes := make([]ast.Node, 0)
 	delimiter := make([]string, 0)
-	rowsStr := make([][]string, 0)
+	rowsNodes := make([][]ast.Node, 0)
 
 	cols := len(tokenizer.Split(headerTokens, tokenizer.Pipe)) - 2
 	for _, t := range tokenizer.Split(headerTokens, tokenizer.Pipe)[1 : cols+1] {
 		if len(t) < 3 {
-			header = append(header, "")
+			headerNodes = append(headerNodes, &ast.Text{})
 		} else {
-			header = append(header, tokenizer.Stringify(t[1:len(t)-1]))
+			cellTokens := t[1 : len(t)-1]
+			nodes, err := ParseBlockWithParsers(cellTokens, []BlockParser{NewHeadingParser(), NewParagraphParser()})
+			if err != nil {
+				return nil, 0
+			}
+			if len(nodes) != 1 {
+				return nil, 0
+			}
+			headerNodes = append(headerNodes, nodes[0])
 		}
 	}
 	for _, t := range tokenizer.Split(delimiterTokens, tokenizer.Pipe)[1 : cols+1] {
@@ -108,15 +116,22 @@ func (*TableParser) Match(tokens []*tokenizer.Token) (ast.Node, int) {
 		}
 	}
 	for _, row := range rows {
-		cells := make([]string, 0)
+		rowNodes := make([]ast.Node, 0)
 		for _, t := range tokenizer.Split(row, tokenizer.Pipe)[1 : cols+1] {
 			if len(t) < 3 {
-				cells = append(cells, "")
+				rowNodes = append(rowNodes, &ast.Text{})
 			} else {
-				cells = append(cells, tokenizer.Stringify(t[1:len(t)-1]))
+				nodes, err := ParseBlockWithParsers(t[1:len(t)-1], []BlockParser{NewHeadingParser(), NewParagraphParser()})
+				if err != nil {
+					return nil, 0
+				}
+				if len(nodes) != 1 {
+					return nil, 0
+				}
+				rowNodes = append(rowNodes, nodes[0])
 			}
 		}
-		rowsStr = append(rowsStr, cells)
+		rowsNodes = append(rowsNodes, rowNodes)
 	}
 
 	size := len(headerTokens) + len(delimiterTokens) + 2
@@ -126,9 +141,9 @@ func (*TableParser) Match(tokens []*tokenizer.Token) (ast.Node, int) {
 	size = size + len(rows) - 1
 
 	return &ast.Table{
-		Header:    header,
+		Header:    headerNodes,
 		Delimiter: delimiter,
-		Rows:      rowsStr,
+		Rows:      rowsNodes,
 	}, size
 }
 

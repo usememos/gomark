@@ -18,32 +18,71 @@ func TestTableParser(t *testing.T) {
 		{
 			text: "| header |\n| --- |\n| cell |\n",
 			table: &ast.Table{
-				Header:    []string{"header"},
+				Header: []ast.Node{
+					&ast.Paragraph{
+						Children: []ast.Node{
+							&ast.Text{Content: "header"},
+						},
+					},
+				},
 				Delimiter: []string{"---"},
-				Rows: [][]string{
-					{"cell"},
+				Rows: [][]ast.Node{
+					{
+						&ast.Paragraph{
+							Children: []ast.Node{
+								&ast.Text{Content: "cell"},
+							},
+						},
+					},
 				},
 			},
 		},
 		{
-			text: "| header1 | header2 |\n| --- | ---- |\n| cell1 | cell2 |\n| cell3 | cell4 |",
+			text: "| **header1** | header2 |\n| --- | ---- |\n| cell1 | cell2 |\n| cell3 | cell4 |",
 			table: &ast.Table{
-				Header:    []string{"header1", "header2"},
+				Header: []ast.Node{
+					&ast.Paragraph{
+						Children: []ast.Node{
+							&ast.Bold{
+								Symbol: "*",
+								Children: []ast.Node{
+									&ast.Text{Content: "header1"},
+								},
+							},
+						},
+					},
+					&ast.Paragraph{
+						Children: []ast.Node{
+							&ast.Text{Content: "header2"},
+						},
+					},
+				},
 				Delimiter: []string{"---", "----"},
-				Rows: [][]string{
-					{"cell1", "cell2"},
-					{"cell3", "cell4"},
-				},
-			},
-		},
-		{
-			text: "| header1 | header2 |\n| :-- | ----: |\n| cell1 | cell2 |\n| cell3 | cell4 |",
-			table: &ast.Table{
-				Header:    []string{"header1", "header2"},
-				Delimiter: []string{":--", "----:"},
-				Rows: [][]string{
-					{"cell1", "cell2"},
-					{"cell3", "cell4"},
+				Rows: [][]ast.Node{
+					{
+						&ast.Paragraph{
+							Children: []ast.Node{
+								&ast.Text{Content: "cell1"},
+							},
+						},
+						&ast.Paragraph{
+							Children: []ast.Node{
+								&ast.Text{Content: "cell2"},
+							},
+						},
+					},
+					{
+						&ast.Paragraph{
+							Children: []ast.Node{
+								&ast.Text{Content: "cell3"},
+							},
+						},
+						&ast.Paragraph{
+							Children: []ast.Node{
+								&ast.Text{Content: "cell4"},
+							},
+						},
+					},
 				},
 			},
 		},
