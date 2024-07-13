@@ -36,7 +36,7 @@ func (*HTMLElementParser) Match(tokens []*tokenizer.Token) (ast.Node, int) {
 		return nil, 0
 	}
 
-	matchedTokens := tokens[:greaterThanIndex]
+	matchedTokens := tokens[:greaterThanIndex+1]
 	attributeTokens := matchedTokens[2 : greaterThanIndex-2]
 	// TODO: Implement attribute parser.
 	if len(attributeTokens) != 0 {

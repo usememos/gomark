@@ -64,6 +64,7 @@ func ParseBlockWithParsers(tokens []*tokenizer.Token, blockParsers []BlockParser
 
 var defaultInlineParsers = []InlineParser{
 	NewEscapingCharacterParser(),
+	NewHTMLElementParser(),
 	NewBoldItalicParser(),
 	NewImageParser(),
 	NewLinkParser(),
@@ -79,7 +80,6 @@ var defaultInlineParsers = []InlineParser{
 	NewReferencedContentParser(),
 	NewTagParser(),
 	NewStrikethroughParser(),
-	NewHTMLElementParser(),
 	NewLineBreakParser(),
 	NewTextParser(),
 }
