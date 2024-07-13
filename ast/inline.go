@@ -1,6 +1,9 @@
 package ast
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+)
 
 type BaseInline struct {
 	BaseNode
@@ -266,4 +269,27 @@ func (*Spoiler) Type() NodeType {
 
 func (n *Spoiler) Restore() string {
 	return fmt.Sprintf("||%s||", n.Content)
+}
+
+type HTMLElement struct {
+	BaseInline
+
+	TagName    string
+	Attributes map[string]string
+}
+
+func (*HTMLElement) Type() NodeType {
+	return HTMLElementNode
+}
+
+func (n *HTMLElement) Restore() string {
+	attributes := []string{}
+	for key, value := range n.Attributes {
+		attributes = append(attributes, fmt.Sprintf(`%s="%s"`, key, value))
+	}
+	attrStr := ""
+	if len(attributes) > 0 {
+		attrStr = " " + strings.Join(attributes, " ")
+	}
+	return fmt.Sprintf("<%s%s />", n.TagName, attrStr)
 }

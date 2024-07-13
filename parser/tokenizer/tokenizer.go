@@ -26,6 +26,7 @@ const (
 	Colon              TokenType = ":"
 	Caret              TokenType = "^"
 	Backslash          TokenType = "\\"
+	Slash              TokenType = "/"
 	NewLine            TokenType = "\n"
 	Space              TokenType = " "
 )
@@ -96,6 +97,8 @@ func Tokenize(text string) []*Token {
 			tokens = append(tokens, NewToken(Caret, "^"))
 		case '\\':
 			tokens = append(tokens, NewToken(Backslash, `\`))
+		case '/':
+			tokens = append(tokens, NewToken(Slash, "/"))
 		case '\n':
 			tokens = append(tokens, NewToken(NewLine, "\n"))
 		case ' ':

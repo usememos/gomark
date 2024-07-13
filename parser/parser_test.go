@@ -234,6 +234,29 @@ func TestParser(t *testing.T) {
 				},
 			},
 		},
+		{
+			text: "Hello\nworld<br />",
+			nodes: []ast.Node{
+				&ast.Paragraph{
+					Children: []ast.Node{
+						&ast.Text{
+							Content: "Hello",
+						},
+					},
+				},
+				&ast.LineBreak{},
+				&ast.Paragraph{
+					Children: []ast.Node{
+						&ast.Text{
+							Content: "world",
+						},
+						&ast.HTMLElement{
+							TagName: "br",
+						},
+					},
+				},
+			},
+		},
 	}
 
 	for _, test := range tests {

@@ -79,6 +79,7 @@ var defaultInlineParsers = []InlineParser{
 	NewReferencedContentParser(),
 	NewTagParser(),
 	NewStrikethroughParser(),
+	NewHTMLElementParser(),
 	NewLineBreakParser(),
 	NewTextParser(),
 }

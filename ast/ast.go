@@ -37,6 +37,7 @@ const (
 	SuperscriptNode       NodeType = "SUPERSCRIPT"
 	ReferencedContentNode NodeType = "REFERENCED_CONTENT"
 	SpoilerNode           NodeType = "SPOILER"
+	HTMLElementNode       NodeType = "HTML_ELEMENT"
 )
 
 type Node interface {
