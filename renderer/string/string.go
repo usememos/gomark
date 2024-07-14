@@ -85,6 +85,8 @@ func (r *StringRenderer) RenderNode(node ast.Node) {
 		r.renderReferencedContent(n)
 	case *ast.Spoiler:
 		r.renderSpoiler(n)
+	case *ast.HTMLElement:
+		r.renderHTMLElement(n)
 	default:
 		// Handle other block types if needed.
 	}
@@ -245,4 +247,8 @@ func (*StringRenderer) renderReferencedContent(_ *ast.ReferencedContent) {}
 
 func (r *StringRenderer) renderSpoiler(node *ast.Spoiler) {
 	r.output.WriteString(node.Content)
+}
+
+func (r *StringRenderer) renderHTMLElement(*ast.HTMLElement) {
+	r.output.WriteString("\n")
 }

@@ -85,6 +85,8 @@ func (r *HTMLRenderer) RenderNode(node ast.Node) {
 		r.renderReferencedContent(n)
 	case *ast.Spoiler:
 		r.renderSpoiler(n)
+	case *ast.HTMLElement:
+		r.renderHTMLElement(n)
 	default:
 		// Handle other block types if needed.
 	}
@@ -340,4 +342,8 @@ func (r *HTMLRenderer) renderSpoiler(node *ast.Spoiler) {
 	r.output.WriteString("<details><summary>")
 	r.output.WriteString(node.Content)
 	r.output.WriteString("</summary></details>")
+}
+
+func (r *HTMLRenderer) renderHTMLElement(node *ast.HTMLElement) {
+	r.output.WriteString(fmt.Sprintf("<%s >", node.TagName))
 }
