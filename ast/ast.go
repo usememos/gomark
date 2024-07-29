@@ -28,6 +28,7 @@ const (
 	ImageNode             NodeType = "IMAGE"
 	LinkNode              NodeType = "LINK"
 	AutoLinkNode          NodeType = "AUTO_LINK"
+	TagStartNode          NodeType = "TAG_START"
 	TagNode               NodeType = "TAG"
 	StrikethroughNode     NodeType = "STRIKETHROUGH"
 	EscapingCharacterNode NodeType = "ESCAPING_CHARACTER"

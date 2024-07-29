@@ -139,6 +139,20 @@ func (n *AutoLink) Restore() string {
 	return fmt.Sprintf("<%s>", n.URL)
 }
 
+type TagStart struct {
+	BaseInline
+
+	Content string
+}
+
+func (*TagStart) Type() NodeType {
+	return TagStartNode
+}
+
+func (n *TagStart) Restore() string {
+	return fmt.Sprintf("#%s", n.Content)
+}
+
 type Tag struct {
 	BaseInline
 
