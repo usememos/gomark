@@ -10,7 +10,7 @@ import (
 	"github.com/usememos/gomark/restore"
 )
 
-func TestTagPartialParser(t *testing.T) {
+func TestTagStartParser(t *testing.T) {
 	tests := []struct {
 		text string
 		tag  ast.Node
@@ -77,7 +77,7 @@ func TestTagPartialParser(t *testing.T) {
 
 	for _, test := range tests {
 		tokens := tokenizer.Tokenize(test.text)
-		node, _ := NewTagPartialParser().Match(tokens)
+		node, _ := NewTagStartParser().Match(tokens)
 		require.Equal(t, restore.Restore([]ast.Node{test.tag}), restore.Restore([]ast.Node{node}))
 	}
 }

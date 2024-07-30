@@ -8,13 +8,13 @@ import (
 const TagMinLen = 6    // #[[x]]
 const TagPrefixLen = 3 // #[[
 
-type TagPartialParser struct{}
+type TagStartParser struct{}
 
-func NewTagPartialParser() InlineParser {
-	return &TagPartialParser{}
+func NewTagStartParser() InlineParser {
+	return &TagStartParser{}
 }
 
-func (*TagPartialParser) Match(tokens []*tokenizer.Token) (ast.Node, int) {
+func (*TagStartParser) Match(tokens []*tokenizer.Token) (ast.Node, int) {
 	matchedTokens := tokenizer.GetFirstLine(tokens)
 	if len(matchedTokens) < TagMinLen {
 		return nil, 0
