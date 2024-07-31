@@ -19,7 +19,7 @@ func (*TagStartParser) Match(tokens []*tokenizer.Token) (ast.Node, int) {
 	if len(matchedTokens) < TagMinLen {
 		return nil, 0
 	}
-	if matchedTokens[0].Type != tokenizer.PoundSign && matchedTokens[1].Type != tokenizer.LeftSquareBracket && matchedTokens[2].Type != tokenizer.LeftSquareBracket {
+	if matchedTokens[0].Type != tokenizer.PoundSign || matchedTokens[1].Type != tokenizer.LeftSquareBracket || matchedTokens[2].Type != tokenizer.LeftSquareBracket {
 		return nil, 0
 	}
 

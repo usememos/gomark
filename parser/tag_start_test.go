@@ -40,6 +40,10 @@ func TestTagStartParser(t *testing.T) {
 			tag:  nil,
 		},
 		{
+			text: " #[[inline]] tag",
+			tag:  nil,
+		},
+		{
 			text: "#[[x]]",
 			tag: &ast.Tag{
 				Content: "x",
