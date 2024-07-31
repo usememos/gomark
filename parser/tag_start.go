@@ -7,6 +7,7 @@ import (
 
 const TagMinLen = 6    // #[[x]]
 const TagPrefixLen = 3 // #[[
+const TagSuffixLen = 2 // ]]
 
 type TagStartParser struct{}
 
@@ -45,7 +46,9 @@ func (*TagStartParser) Match(tokens []*tokenizer.Token) (ast.Node, int) {
 		return nil, 0
 	}
 
+	usedTokenSize := len(contentTokens) + TagPrefixLen + TagSuffixLen
+
 	return &ast.TagStart{
 		Content: tokenizer.Stringify(contentTokens),
-	}, len(contentTokens) + 1
+	}, usedTokenSize
 }
