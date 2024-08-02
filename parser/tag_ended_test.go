@@ -10,7 +10,7 @@ import (
 	"github.com/usememos/gomark/restore"
 )
 
-func TestTagPartialStartParser(t *testing.T) {
+func TestTagEndedParser(t *testing.T) {
 	tests := []struct {
 		text string
 		tag  ast.Node
@@ -24,11 +24,11 @@ func TestTagPartialStartParser(t *testing.T) {
 			tag:  nil,
 		},
 		{
-			text: "#[[]]",
+			text: "#]]",
 			tag:  nil,
 		},
 		{
-			text: "#[[ ]]",
+			text: "# ]]",
 			tag:  nil,
 		},
 		{
@@ -36,36 +36,32 @@ func TestTagPartialStartParser(t *testing.T) {
 			tag:  nil,
 		},
 		{
-			text: "#[[tag ]]",
+			text: "#tag ]]",
 			tag:  nil,
 		},
 		{
-			text: " #[[inline]] tag",
-			tag:  nil,
-		},
-		{
-			text: "#[[x]]",
+			text: "#x]]",
 			tag: &ast.Tag{
 				Content: "x",
 				Partial: true,
 			},
 		},
 		{
-			text: "#[[foo]]",
+			text: "#foo]]",
 			tag: &ast.Tag{
 				Content: "foo",
 				Partial: true,
 			},
 		},
 		{
-			text: "#[[foo]]bar",
+			text: "#foo]]bar",
 			tag: &ast.Tag{
 				Content: "foo",
 				Partial: true,
 			},
 		},
 		{
-			text: "#[[foo]] bar",
+			text: "#foo]] bar",
 			tag: &ast.Tag{
 				Content: "foo",
 				Partial: true,
@@ -76,7 +72,7 @@ func TestTagPartialStartParser(t *testing.T) {
 			tag:  nil,
 		},
 		{
-			text: "#[[tag/subtag]]",
+			text: "#tag/subtag]]",
 			tag: &ast.Tag{
 				Content: "tag/subtag",
 				Partial: true,
@@ -86,7 +82,7 @@ func TestTagPartialStartParser(t *testing.T) {
 
 	for _, test := range tests {
 		tokens := tokenizer.Tokenize(test.text)
-		node, _ := NewTagPartialStartParser().Match(tokens)
+		node, _ := NewTagEndedParser().Match(tokens)
 		require.Equal(t, restore.Restore([]ast.Node{test.tag}), restore.Restore([]ast.Node{node}))
 	}
 }

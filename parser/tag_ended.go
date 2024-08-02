@@ -5,22 +5,22 @@ import (
 	"github.com/usememos/gomark/parser/tokenizer"
 )
 
-const TagMinLen = 6    // #[[x]]
-const TagPrefixLen = 3 // #[[
+const TagMinLen = 4    // #x]]
+const TagPrefixLen = 1 // #
 const TagSuffixLen = 2 // ]]
 
-type TagPartialStartParser struct{}
+type TagEndedParser struct{}
 
-func NewTagPartialStartParser() InlineParser {
-	return &TagPartialStartParser{}
+func NewTagEndedParser() InlineParser {
+	return &TagEndedParser{}
 }
 
-func (*TagPartialStartParser) Match(tokens []*tokenizer.Token) (ast.Node, int) {
+func (*TagEndedParser) Match(tokens []*tokenizer.Token) (ast.Node, int) {
 	matchedTokens := tokenizer.GetFirstLine(tokens)
 	if len(matchedTokens) < TagMinLen {
 		return nil, 0
 	}
-	if matchedTokens[0].Type != tokenizer.PoundSign || matchedTokens[1].Type != tokenizer.LeftSquareBracket || matchedTokens[2].Type != tokenizer.LeftSquareBracket {
+	if matchedTokens[0].Type != tokenizer.PoundSign {
 		return nil, 0
 	}
 

@@ -78,7 +78,7 @@ var defaultInlineParsers = []InlineParser{
 	NewSuperscriptParser(),
 	NewMathParser(),
 	NewReferencedContentParser(),
-	NewTagPartialStartParser(),
+	NewTagEndedParser(),
 	NewTagParser(),
 	NewStrikethroughParser(),
 	NewLineBreakParser(),
