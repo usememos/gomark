@@ -143,6 +143,7 @@ type Tag struct {
 	BaseInline
 
 	Content string
+	Partial bool
 }
 
 func (*Tag) Type() NodeType {
@@ -150,6 +151,10 @@ func (*Tag) Type() NodeType {
 }
 
 func (n *Tag) Restore() string {
+	if n.Partial {
+		return fmt.Sprintf("#[[%s]]", n.Content)
+	}
+
 	return fmt.Sprintf("#%s", n.Content)
 }
 
