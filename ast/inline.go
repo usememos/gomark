@@ -152,7 +152,7 @@ func (*Tag) Type() NodeType {
 
 func (n *Tag) Restore() string {
 	if n.Partial {
-		return fmt.Sprintf("#[[%s]]", n.Content)
+		return fmt.Sprintf("#%s]]", n.Content)
 	}
 
 	return fmt.Sprintf("#%s", n.Content)
