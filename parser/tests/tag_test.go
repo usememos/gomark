@@ -34,6 +34,12 @@ func TestTagParser(t *testing.T) {
 				Content: "tag/subtag",
 			},
 		},
+		{
+			text: `#tag\'s 123`,
+			node: &ast.Tag{
+				Content: "tag",
+			},
+		},
 	}
 
 	for _, test := range tests {

@@ -22,7 +22,7 @@ func (*TagParser) Match(tokens []*tokenizer.Token) (ast.Node, int) {
 
 	contentTokens := []*tokenizer.Token{}
 	for _, token := range matchedTokens[1:] {
-		if token.Type == tokenizer.Space || token.Type == tokenizer.PoundSign {
+		if token.Type == tokenizer.Space || token.Type == tokenizer.PoundSign || token.Type == tokenizer.Backslash {
 			break
 		}
 		contentTokens = append(contentTokens, token)
