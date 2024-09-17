@@ -131,21 +131,8 @@ func (n *List) Restore() string {
 	return result
 }
 
-type ListItem struct {
-	BaseBlock
-}
-
-func (*ListItem) Type() NodeType {
-	return ListItemNode
-}
-
-func (*ListItem) Restore() string {
-	// Should be overridden.
-	return ""
-}
-
 type OrderedListItem struct {
-	ListItem
+	BaseBlock
 
 	// Number is the number of the list.
 	Number string
@@ -167,7 +154,7 @@ func (n *OrderedListItem) Restore() string {
 }
 
 type UnorderedListItem struct {
-	ListItem
+	BaseBlock
 
 	// Symbol is "*" or "-" or "+".
 	Symbol string
@@ -189,7 +176,7 @@ func (n *UnorderedListItem) Restore() string {
 }
 
 type TaskListItem struct {
-	ListItem
+	BaseBlock
 
 	// Symbol is "*" or "-" or "+".
 	Symbol string

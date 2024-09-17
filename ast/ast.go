@@ -11,7 +11,6 @@ const (
 	HorizontalRuleNode    NodeType = "HORIZONTAL_RULE"
 	BlockquoteNode        NodeType = "BLOCKQUOTE"
 	ListNode              NodeType = "LIST"
-	ListItemNode          NodeType = "LIST_ITEM"
 	OrderedListItemNode   NodeType = "ORDERED_LIST_ITEM"
 	UnorderedListItemNode NodeType = "UNORDERED_LIST_ITEM"
 	TaskListItemNode      NodeType = "TASK_LIST_ITEM"
@@ -55,7 +54,7 @@ type BaseNode struct {
 
 func IsBlockNode(node Node) bool {
 	switch node.Type() {
-	case ParagraphNode, CodeBlockNode, HeadingNode, HorizontalRuleNode, BlockquoteNode, ListNode, ListItemNode, OrderedListItemNode, UnorderedListItemNode, TaskListItemNode, TableNode, EmbeddedContentNode:
+	case ParagraphNode, CodeBlockNode, HeadingNode, HorizontalRuleNode, BlockquoteNode, ListNode, OrderedListItemNode, UnorderedListItemNode, TaskListItemNode, TableNode, EmbeddedContentNode:
 		return true
 	default:
 		return false
