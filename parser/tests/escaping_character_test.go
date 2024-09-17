@@ -15,9 +15,15 @@ func TestEscapingCharacterParser(t *testing.T) {
 		node ast.Node
 	}{
 		{
-			text: `\# 123`,
+			text: `\#`,
 			node: &ast.EscapingCharacter{
 				Symbol: "#",
+			},
+		},
+		{
+			text: `\' test`,
+			node: &ast.EscapingCharacter{
+				Symbol: "'",
 			},
 		},
 	}

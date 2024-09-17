@@ -25,6 +25,7 @@ const (
 	Pipe               TokenType = "|"
 	Colon              TokenType = ":"
 	Caret              TokenType = "^"
+	Apostrophe         TokenType = "'"
 	Backslash          TokenType = "\\"
 	Slash              TokenType = "/"
 	NewLine            TokenType = "\n"
@@ -95,6 +96,8 @@ func Tokenize(text string) []*Token {
 			tokens = append(tokens, NewToken(Colon, ":"))
 		case '^':
 			tokens = append(tokens, NewToken(Caret, "^"))
+		case '\'':
+			tokens = append(tokens, NewToken(Apostrophe, "'"))
 		case '\\':
 			tokens = append(tokens, NewToken(Backslash, `\`))
 		case '/':
