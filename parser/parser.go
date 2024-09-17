@@ -27,9 +27,9 @@ var defaultBlockParsers = []BlockParser{
 	NewHorizontalRuleParser(),
 	NewHeadingParser(),
 	NewBlockquoteParser(),
-	NewTaskListParser(),
-	NewUnorderedListParser(),
-	NewOrderedListParser(),
+	NewOrderedListItemParser(),
+	NewTaskListItemParser(),
+	NewUnorderedListItemParser(),
 	NewMathBlockParser(),
 	NewEmbeddedContentParser(),
 	NewParagraphParser(),
@@ -42,24 +42,18 @@ func ParseBlock(tokens []*tokenizer.Token) ([]ast.Node, error) {
 
 func ParseBlockWithParsers(tokens []*tokenizer.Token, blockParsers []BlockParser) ([]ast.Node, error) {
 	nodes := []ast.Node{}
-	var prevNode ast.Node
 	for len(tokens) > 0 {
 		for _, blockParser := range blockParsers {
 			node, size := blockParser.Match(tokens)
 			if node != nil && size != 0 {
 				// Consume matched tokens.
 				tokens = tokens[size:]
-				if prevNode != nil {
-					prevNode.SetNextSibling(node)
-					node.SetPrevSibling(prevNode)
-				}
-				prevNode = node
 				nodes = append(nodes, node)
 				break
 			}
 		}
 	}
-	return nodes, nil
+	return mergeListItemNodes(nodes), nil
 }
 
 var defaultInlineParsers = []InlineParser{
@@ -90,28 +84,66 @@ func ParseInline(tokens []*tokenizer.Token) ([]ast.Node, error) {
 
 func ParseInlineWithParsers(tokens []*tokenizer.Token, inlineParsers []InlineParser) ([]ast.Node, error) {
 	nodes := []ast.Node{}
-	var prevNode ast.Node
 	for len(tokens) > 0 {
 		for _, inlineParser := range inlineParsers {
 			node, size := inlineParser.Match(tokens)
 			if node != nil && size != 0 {
 				// Consume matched tokens.
 				tokens = tokens[size:]
-				if prevNode != nil {
-					// Merge text nodes if possible.
-					if prevNode.Type() == ast.TextNode && node.Type() == ast.TextNode {
-						prevNode.(*ast.Text).Content += node.(*ast.Text).Content
-						break
-					}
-
-					prevNode.SetNextSibling(node)
-					node.SetPrevSibling(prevNode)
-				}
-				prevNode = node
 				nodes = append(nodes, node)
 				break
 			}
 		}
 	}
-	return nodes, nil
+	return mergeTextNodes(nodes), nil
+}
+
+func mergeListItemNodes(nodes []ast.Node) []ast.Node {
+	if len(nodes) == 0 {
+		return nodes
+	}
+	result := []ast.Node{}
+	for i := 0; i < len(nodes); i++ {
+		var prevNode, prevResultNode ast.Node
+		if i > 0 {
+			prevNode = nodes[i-1]
+		}
+		if len(result) > 0 {
+			prevResultNode = result[len(result)-1]
+		}
+		switch nodes[i].(type) {
+		case *ast.OrderedListItem, *ast.UnorderedListItem, *ast.TaskListItem:
+			if prevResultNode == nil || prevResultNode.Type() != ast.ListNode {
+				prevResultNode = &ast.List{
+					BaseBlock: ast.BaseBlock{},
+				}
+				result = append(result, prevResultNode)
+			}
+			prevResultNode.(*ast.List).Children = append(prevResultNode.(*ast.List).Children, nodes[i])
+		case *ast.LineBreak:
+			if prevResultNode != nil && prevResultNode.Type() == ast.ListNode && (prevNode == nil || prevNode.Type() != ast.LineBreakNode) {
+				prevResultNode.(*ast.List).Children = append(prevResultNode.(*ast.List).Children, nodes[i])
+			} else {
+				result = append(result, nodes[i])
+			}
+		default:
+			result = append(result, nodes[i])
+		}
+	}
+	return result
+}
+
+func mergeTextNodes(nodes []ast.Node) []ast.Node {
+	if len(nodes) == 0 {
+		return nodes
+	}
+	result := []ast.Node{nodes[0]}
+	for i := 1; i < len(nodes); i++ {
+		if nodes[i].Type() == ast.TextNode && result[len(result)-1].Type() == ast.TextNode {
+			result[len(result)-1].(*ast.Text).Content += nodes[i].(*ast.Text).Content
+		} else {
+			result = append(result, nodes[i])
+		}
+	}
+	return result
 }

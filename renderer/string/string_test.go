@@ -28,7 +28,7 @@ func TestStringRender(t *testing.T) {
 		},
 		{
 			text:     "Test\n1. Hello\n2. World",
-			expected: "Test\n1. Hello\n2. World\n",
+			expected: "Test\n1. Hello\n2. World",
 		},
 	}
 

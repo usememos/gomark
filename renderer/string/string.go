@@ -39,12 +39,14 @@ func (r *StringRenderer) RenderNode(node ast.Node) {
 		r.renderHorizontalRule(n)
 	case *ast.Blockquote:
 		r.renderBlockquote(n)
-	case *ast.UnorderedList:
-		r.renderUnorderedList(n)
-	case *ast.OrderedList:
-		r.renderOrderedList(n)
-	case *ast.TaskList:
-		r.renderTaskList(n)
+	case *ast.List:
+		r.renderList(n)
+	case *ast.UnorderedListItem:
+		r.renderUnorderedListItem(n)
+	case *ast.OrderedListItem:
+		r.renderOrderedListItem(n)
+	case *ast.TaskListItem:
+		r.renderTaskListItem(n)
 	case *ast.MathBlock:
 		r.renderMathBlock(n)
 	case *ast.Table:
@@ -143,22 +145,25 @@ func (r *StringRenderer) renderBlockquote(node *ast.Blockquote) {
 	r.output.WriteString("\n")
 }
 
-func (r *StringRenderer) renderUnorderedList(node *ast.UnorderedList) {
-	r.output.WriteString(node.Symbol)
-	r.RenderNodes(node.Children)
-	r.output.WriteString("\n")
+func (r *StringRenderer) renderList(node *ast.List) {
+	for _, item := range node.Children {
+		r.RenderNodes([]ast.Node{item})
+	}
 }
 
-func (r *StringRenderer) renderOrderedList(node *ast.OrderedList) {
+func (r *StringRenderer) renderUnorderedListItem(node *ast.UnorderedListItem) {
+	r.output.WriteString(node.Symbol)
+	r.RenderNodes(node.Children)
+}
+
+func (r *StringRenderer) renderOrderedListItem(node *ast.OrderedListItem) {
 	r.output.WriteString(fmt.Sprintf("%s. ", node.Number))
 	r.RenderNodes(node.Children)
-	r.output.WriteString("\n")
 }
 
-func (r *StringRenderer) renderTaskList(node *ast.TaskList) {
+func (r *StringRenderer) renderTaskListItem(node *ast.TaskListItem) {
 	r.output.WriteString(node.Symbol)
 	r.RenderNodes(node.Children)
-	r.output.WriteString("\n")
 }
 
 func (r *StringRenderer) renderMathBlock(node *ast.MathBlock) {

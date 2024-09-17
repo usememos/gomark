@@ -4,18 +4,20 @@ type NodeType string
 
 // Block nodes.
 const (
-	LineBreakNode       NodeType = "LINE_BREAK"
-	ParagraphNode       NodeType = "PARAGRAPH"
-	CodeBlockNode       NodeType = "CODE_BLOCK"
-	HeadingNode         NodeType = "HEADING"
-	HorizontalRuleNode  NodeType = "HORIZONTAL_RULE"
-	BlockquoteNode      NodeType = "BLOCKQUOTE"
-	OrderedListNode     NodeType = "ORDERED_LIST"
-	UnorderedListNode   NodeType = "UNORDERED_LIST"
-	TaskListNode        NodeType = "TASK_LIST"
-	MathBlockNode       NodeType = "MATH_BLOCK"
-	TableNode           NodeType = "TABLE"
-	EmbeddedContentNode NodeType = "EMBEDDED_CONTENT"
+	LineBreakNode         NodeType = "LINE_BREAK"
+	ParagraphNode         NodeType = "PARAGRAPH"
+	CodeBlockNode         NodeType = "CODE_BLOCK"
+	HeadingNode           NodeType = "HEADING"
+	HorizontalRuleNode    NodeType = "HORIZONTAL_RULE"
+	BlockquoteNode        NodeType = "BLOCKQUOTE"
+	ListNode              NodeType = "LIST"
+	ListItemNode          NodeType = "LIST_ITEM"
+	OrderedListItemNode   NodeType = "ORDERED_LIST_ITEM"
+	UnorderedListItemNode NodeType = "UNORDERED_LIST_ITEM"
+	TaskListItemNode      NodeType = "TASK_LIST_ITEM"
+	MathBlockNode         NodeType = "MATH_BLOCK"
+	TableNode             NodeType = "TABLE"
+	EmbeddedContentNode   NodeType = "EMBEDDED_CONTENT"
 )
 
 // Inline nodes.
@@ -46,45 +48,14 @@ type Node interface {
 
 	// Restore returns a string representation of this node.
 	Restore() string
-
-	// PrevSibling returns a previous sibling node of this node.
-	PrevSibling() Node
-
-	// NextSibling returns a next sibling node of this node.
-	NextSibling() Node
-
-	// SetPrevSibling sets a previous sibling node to this node.
-	SetPrevSibling(Node)
-
-	// SetNextSibling sets a next sibling node to this node.
-	SetNextSibling(Node)
 }
 
 type BaseNode struct {
-	prevSibling Node
-
-	nextSibling Node
-}
-
-func (n *BaseNode) PrevSibling() Node {
-	return n.prevSibling
-}
-
-func (n *BaseNode) NextSibling() Node {
-	return n.nextSibling
-}
-
-func (n *BaseNode) SetPrevSibling(node Node) {
-	n.prevSibling = node
-}
-
-func (n *BaseNode) SetNextSibling(node Node) {
-	n.nextSibling = node
 }
 
 func IsBlockNode(node Node) bool {
 	switch node.Type() {
-	case ParagraphNode, CodeBlockNode, HeadingNode, HorizontalRuleNode, BlockquoteNode, OrderedListNode, UnorderedListNode, TaskListNode, MathBlockNode, TableNode, EmbeddedContentNode:
+	case ParagraphNode, CodeBlockNode, HeadingNode, HorizontalRuleNode, BlockquoteNode, ListNode, ListItemNode, OrderedListItemNode, UnorderedListItemNode, TaskListItemNode, TableNode, EmbeddedContentNode:
 		return true
 	default:
 		return false

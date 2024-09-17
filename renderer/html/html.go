@@ -39,12 +39,14 @@ func (r *HTMLRenderer) RenderNode(node ast.Node) {
 		r.renderHorizontalRule(n)
 	case *ast.Blockquote:
 		r.renderBlockquote(n)
-	case *ast.UnorderedList:
-		r.renderUnorderedList(n)
-	case *ast.OrderedList:
-		r.renderOrderedList(n)
-	case *ast.TaskList:
-		r.renderTaskList(n)
+	case *ast.List:
+		r.renderList(n)
+	case *ast.UnorderedListItem:
+		r.renderUnorderedListItem(n)
+	case *ast.OrderedListItem:
+		r.renderOrderedListItem(n)
+	case *ast.TaskListItem:
+		r.renderTaskListItem(n)
 	case *ast.MathBlock:
 		r.renderMathBlock(n)
 	case *ast.Table:
@@ -149,48 +151,35 @@ func (r *HTMLRenderer) renderBlockquote(node *ast.Blockquote) {
 	r.output.WriteString("</blockquote>")
 }
 
-func (r *HTMLRenderer) renderUnorderedList(node *ast.UnorderedList) {
-	prevSibling, nextSibling := ast.FindPrevSiblingExceptLineBreak(node), ast.FindNextSiblingExceptLineBreak(node)
-	if prevSibling == nil || prevSibling.Type() != ast.UnorderedListNode {
-		r.output.WriteString("<ul>")
+func (r *HTMLRenderer) renderList(node *ast.List) {
+	r.output.WriteString("<dl>")
+	for _, item := range node.Children {
+		r.RenderNodes([]ast.Node{item})
 	}
+	r.output.WriteString("</dl>")
+}
+
+func (r *HTMLRenderer) renderUnorderedListItem(node *ast.UnorderedListItem) {
 	r.output.WriteString("<li>")
 	r.RenderNodes(node.Children)
 	r.output.WriteString("</li>")
-	if nextSibling == nil || nextSibling.Type() != ast.UnorderedListNode {
-		r.output.WriteString("</ul>")
-	}
 }
 
-func (r *HTMLRenderer) renderOrderedList(node *ast.OrderedList) {
-	prevSibling, nextSibling := ast.FindPrevSiblingExceptLineBreak(node), ast.FindNextSiblingExceptLineBreak(node)
-	if prevSibling == nil || prevSibling.Type() != ast.OrderedListNode {
-		r.output.WriteString("<ol>")
-	}
+func (r *HTMLRenderer) renderOrderedListItem(node *ast.OrderedListItem) {
 	r.output.WriteString("<li>")
 	r.RenderNodes(node.Children)
 	r.output.WriteString("</li>")
-	if nextSibling == nil || nextSibling.Type() != ast.OrderedListNode {
-		r.output.WriteString("</ol>")
-	}
 }
 
-func (r *HTMLRenderer) renderTaskList(node *ast.TaskList) {
-	prevSibling, nextSibling := ast.FindPrevSiblingExceptLineBreak(node), ast.FindNextSiblingExceptLineBreak(node)
-	if prevSibling == nil || prevSibling.Type() != ast.TaskListNode {
-		r.output.WriteString("<ul>")
-	}
+func (r *HTMLRenderer) renderTaskListItem(node *ast.TaskListItem) {
 	r.output.WriteString("<li>")
 	r.output.WriteString("<input type=\"checkbox\"")
 	if node.Complete {
 		r.output.WriteString(" checked")
 	}
-	r.output.WriteString(" disabled>")
+	r.output.WriteString(" disabled />")
 	r.RenderNodes(node.Children)
 	r.output.WriteString("</li>")
-	if nextSibling == nil || nextSibling.Type() != ast.TaskListNode {
-		r.output.WriteString("</ul>")
-	}
 }
 
 func (r *HTMLRenderer) renderMathBlock(node *ast.MathBlock) {

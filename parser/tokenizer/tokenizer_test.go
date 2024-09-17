@@ -84,7 +84,6 @@ func TestSplit(t *testing.T) {
 		sep    TokenType
 		result [][]*Token
 	}{
-
 		{
 			tokens: []*Token{
 				{
@@ -138,5 +137,36 @@ func TestSplit(t *testing.T) {
 		for index, tokens := range result {
 			require.Equal(t, Stringify(test.result[index]), Stringify(tokens))
 		}
+	}
+}
+
+func TestGetFirstLine(t *testing.T) {
+	tests := []struct {
+		tokens []*Token
+		want   []*Token
+	}{
+		{
+			tokens: []*Token{
+				{
+					Type:  Asterisk,
+					Value: "hello world",
+				},
+				{
+					Type:  NewLine,
+					Value: "\n",
+				},
+			},
+			want: []*Token{
+				{
+					Type:  Asterisk,
+					Value: "hello world",
+				},
+			},
+		},
+	}
+
+	for _, test := range tests {
+		result := GetFirstLine(test.tokens)
+		require.Equal(t, test.want, result)
 	}
 }

@@ -113,8 +113,39 @@ func (n *Blockquote) Restore() string {
 	return result
 }
 
-type OrderedList struct {
+type List struct {
 	BaseBlock
+
+	Children []Node
+}
+
+func (*List) Type() NodeType {
+	return ListNode
+}
+
+func (n *List) Restore() string {
+	var result string
+	for _, child := range n.Children {
+		result += child.Restore()
+	}
+	return result
+}
+
+type ListItem struct {
+	BaseBlock
+}
+
+func (*ListItem) Type() NodeType {
+	return ListItemNode
+}
+
+func (*ListItem) Restore() string {
+	// Should be overridden.
+	return ""
+}
+
+type OrderedListItem struct {
+	ListItem
 
 	// Number is the number of the list.
 	Number string
@@ -123,11 +154,11 @@ type OrderedList struct {
 	Children []Node
 }
 
-func (*OrderedList) Type() NodeType {
-	return OrderedListNode
+func (*OrderedListItem) Type() NodeType {
+	return OrderedListItemNode
 }
 
-func (n *OrderedList) Restore() string {
+func (n *OrderedListItem) Restore() string {
 	var result string
 	for _, child := range n.Children {
 		result += child.Restore()
@@ -135,8 +166,8 @@ func (n *OrderedList) Restore() string {
 	return fmt.Sprintf("%s%s. %s", strings.Repeat(" ", n.Indent), n.Number, result)
 }
 
-type UnorderedList struct {
-	BaseBlock
+type UnorderedListItem struct {
+	ListItem
 
 	// Symbol is "*" or "-" or "+".
 	Symbol string
@@ -145,11 +176,11 @@ type UnorderedList struct {
 	Children []Node
 }
 
-func (*UnorderedList) Type() NodeType {
-	return UnorderedListNode
+func (*UnorderedListItem) Type() NodeType {
+	return UnorderedListItemNode
 }
 
-func (n *UnorderedList) Restore() string {
+func (n *UnorderedListItem) Restore() string {
 	var result string
 	for _, child := range n.Children {
 		result += child.Restore()
@@ -157,8 +188,8 @@ func (n *UnorderedList) Restore() string {
 	return fmt.Sprintf("%s%s %s", strings.Repeat(" ", n.Indent), n.Symbol, result)
 }
 
-type TaskList struct {
-	BaseBlock
+type TaskListItem struct {
+	ListItem
 
 	// Symbol is "*" or "-" or "+".
 	Symbol string
@@ -168,11 +199,11 @@ type TaskList struct {
 	Children []Node
 }
 
-func (*TaskList) Type() NodeType {
-	return TaskListNode
+func (*TaskListItem) Type() NodeType {
+	return TaskListItemNode
 }
 
-func (n *TaskList) Restore() string {
+func (n *TaskListItem) Restore() string {
 	var result string
 	for _, child := range n.Children {
 		result += child.Restore()

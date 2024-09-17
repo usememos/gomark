@@ -48,19 +48,19 @@ func TestHTMLRenderer(t *testing.T) {
 		},
 		{
 			text:     "* Hello\n* world!",
-			expected: `<ul><li>Hello</li><li>world!</li></ul>`,
+			expected: `<dl><li>Hello</li><br><li>world!</li></dl>`,
 		},
 		{
 			text:     "1. Hello\n2. world\n* !",
-			expected: `<ol><li>Hello</li><li>world</li></ol><ul><li>!</li></ul>`,
+			expected: `<dl><li>Hello</li><br><li>world</li><br><li>!</li></dl>`,
 		},
 		{
 			text:     "- [ ] hello\n- [x] world",
-			expected: `<ul><li><input type="checkbox" disabled>hello</li><li><input type="checkbox" checked disabled>world</li></ul>`,
+			expected: `<dl><li><input type="checkbox" disabled />hello</li><br><li><input type="checkbox" checked disabled />world</li></dl>`,
 		},
 		{
 			text:     "1. ordered\n* unorder\n- [ ] checkbox\n- [x] checked",
-			expected: `<ol><li>ordered</li></ol><ul><li>unorder</li></ul><ul><li><input type="checkbox" disabled>checkbox</li><li><input type="checkbox" checked disabled>checked</li></ul>`,
+			expected: `<dl><li>ordered</li><br><li>unorder</li><br><li><input type="checkbox" disabled />checkbox</li><br><li><input type="checkbox" checked disabled />checked</li></dl>`,
 		},
 	}
 
