@@ -1,6 +1,8 @@
 package parser
 
 import (
+	"slices"
+
 	"github.com/usememos/gomark/ast"
 	"github.com/usememos/gomark/parser/tokenizer"
 )
@@ -104,9 +106,12 @@ func mergeListItemNodes(nodes []ast.Node) []ast.Node {
 	}
 	result := []ast.Node{}
 	for i := 0; i < len(nodes); i++ {
-		var prevNode, prevResultNode ast.Node
+		var prevNode, nextNode, prevResultNode ast.Node
 		if i > 0 {
 			prevNode = nodes[i-1]
+		}
+		if i < len(nodes)-1 {
+			nextNode = nodes[i+1]
 		}
 		if len(result) > 0 {
 			prevResultNode = result[len(result)-1]
@@ -121,7 +126,11 @@ func mergeListItemNodes(nodes []ast.Node) []ast.Node {
 			}
 			prevResultNode.(*ast.List).Children = append(prevResultNode.(*ast.List).Children, nodes[i])
 		case *ast.LineBreak:
-			if prevResultNode != nil && prevResultNode.Type() == ast.ListNode && (prevNode == nil || prevNode.Type() != ast.LineBreakNode) {
+			if prevResultNode != nil && prevResultNode.Type() == ast.ListNode &&
+				// Check if the prev node is not a line break node.
+				(prevNode == nil || prevNode.Type() != ast.LineBreakNode) &&
+				// Check if the next node is a list item node.
+				(nextNode == nil || slices.Contains([]ast.NodeType{ast.OrderedListItemNode, ast.UnorderedListItemNode, ast.TaskListItemNode}, nextNode.Type())) {
 				prevResultNode.(*ast.List).Children = append(prevResultNode.(*ast.List).Children, nodes[i])
 			} else {
 				result = append(result, nodes[i])

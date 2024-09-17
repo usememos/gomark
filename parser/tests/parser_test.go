@@ -324,9 +324,9 @@ func TestParser(t *testing.T) {
 								},
 							},
 						},
-						&ast.LineBreak{},
 					},
 				},
+				&ast.LineBreak{},
 				&ast.LineBreak{},
 				&ast.List{
 					Children: []ast.Node{
