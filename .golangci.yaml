@@ -17,21 +17,10 @@ linters:
     - mirror
     - bodyclose
 
-issues:
-  include:
-    # https://golangci-lint.run/usage/configuration/#command-line-options
-  exclude:
-    - Rollback
-    - logger.Sync
-    - pgInstance.Stop
-    - fmt.Printf
-    - Enter(.*)_(.*)
-    - Exit(.*)_(.*)
-
 linters-settings:
   goimports:
     # Put imports beginning with prefix after 3rd-party packages.
-    local-prefixes: github.com/usememos/gomark
+    local-prefixes: github.com/usememos/memos
   revive:
     # Default to run all linters so that new rules in the future could automatically be added to the static check.
     enable-all-rules: true
@@ -74,6 +63,8 @@ linters-settings:
       - name: unhandled-error
         disabled: true
       - name: if-return
+        disabled: true
+      - name: max-control-nesting
         disabled: true
   gocritic:
     disabled-checks:
