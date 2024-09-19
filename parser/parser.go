@@ -118,9 +118,17 @@ func mergeListItemNodes(nodes []ast.Node) []ast.Node {
 		}
 		switch nodes[i].(type) {
 		case *ast.OrderedListItem, *ast.UnorderedListItem, *ast.TaskListItem:
-			if prevResultNode == nil || prevResultNode.Type() != ast.ListNode {
+			var listKind ast.ListKind
+			switch nodes[i].(type) {
+			case *ast.OrderedListItem:
+				listKind = ast.OrderedList
+			case *ast.UnorderedListItem, *ast.TaskListItem:
+				listKind = ast.UnorderedList
+			}
+			if prevResultNode == nil || prevResultNode.Type() != ast.ListNode || prevResultNode.(*ast.List).Kind != listKind {
 				prevResultNode = &ast.List{
 					BaseBlock: ast.BaseBlock{},
+					Kind:      listKind,
 				}
 				result = append(result, prevResultNode)
 			}

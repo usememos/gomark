@@ -1,6 +1,7 @@
 package tests
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -159,6 +160,7 @@ func TestParser(t *testing.T) {
 			text: "1. hello\n- [ ] world",
 			nodes: []ast.Node{
 				&ast.List{
+					Kind: ast.OrderedList,
 					Children: []ast.Node{
 						&ast.OrderedListItem{
 							Number: "1",
@@ -169,6 +171,11 @@ func TestParser(t *testing.T) {
 							},
 						},
 						&ast.LineBreak{},
+					},
+				},
+				&ast.List{
+					Kind: ast.UnorderedList,
+					Children: []ast.Node{
 						&ast.TaskListItem{
 							Symbol:   tokenizer.Hyphen,
 							Complete: false,
@@ -186,6 +193,7 @@ func TestParser(t *testing.T) {
 			text: "- [ ] hello\n- [x] world",
 			nodes: []ast.Node{
 				&ast.List{
+					Kind: ast.UnorderedList,
 					Children: []ast.Node{
 						&ast.TaskListItem{
 							Symbol:   tokenizer.Hyphen,
@@ -289,6 +297,7 @@ func TestParser(t *testing.T) {
 			text: "* unordered list item 1\n* unordered list item 2",
 			nodes: []ast.Node{
 				&ast.List{
+					Kind: ast.UnorderedList,
 					Children: []ast.Node{
 						&ast.UnorderedListItem{
 							Symbol: tokenizer.Asterisk,
@@ -315,6 +324,7 @@ func TestParser(t *testing.T) {
 			text: "* unordered list item\n\n1. ordered list item",
 			nodes: []ast.Node{
 				&ast.List{
+					Kind: ast.UnorderedList,
 					Children: []ast.Node{
 						&ast.UnorderedListItem{
 							Symbol: tokenizer.Asterisk,
@@ -329,6 +339,7 @@ func TestParser(t *testing.T) {
 				&ast.LineBreak{},
 				&ast.LineBreak{},
 				&ast.List{
+					Kind: ast.OrderedList,
 					Children: []ast.Node{
 						&ast.OrderedListItem{
 							Number: "1",
@@ -347,6 +358,6 @@ func TestParser(t *testing.T) {
 	for _, test := range tests {
 		tokens := tokenizer.Tokenize(test.text)
 		nodes, _ := parser.Parse(tokens)
-		require.Equal(t, test.nodes, nodes)
+		require.Equal(t, test.nodes, nodes, fmt.Sprintf("Test case: %s", test.text))
 	}
 }

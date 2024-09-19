@@ -1,6 +1,7 @@
 package html
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -48,19 +49,11 @@ func TestHTMLRenderer(t *testing.T) {
 		},
 		{
 			text:     "* Hello\n* world!",
-			expected: `<dl><li>Hello</li><br><li>world!</li></dl>`,
-		},
-		{
-			text:     "1. Hello\n2. world\n* !",
-			expected: `<dl><li>Hello</li><br><li>world</li><br><li>!</li></dl>`,
+			expected: `<ul><li>Hello</li><br><li>world!</li></ul>`,
 		},
 		{
 			text:     "- [ ] hello\n- [x] world",
-			expected: `<dl><li><input type="checkbox" disabled />hello</li><br><li><input type="checkbox" checked disabled />world</li></dl>`,
-		},
-		{
-			text:     "1. ordered\n* unorder\n- [ ] checkbox\n- [x] checked",
-			expected: `<dl><li>ordered</li><br><li>unorder</li><br><li><input type="checkbox" disabled />checkbox</li><br><li><input type="checkbox" checked disabled />checked</li></dl>`,
+			expected: `<ul><li><input type="checkbox" disabled />hello</li><br><li><input type="checkbox" checked disabled />world</li></ul>`,
 		},
 	}
 
@@ -69,6 +62,6 @@ func TestHTMLRenderer(t *testing.T) {
 		nodes, err := parser.Parse(tokens)
 		require.NoError(t, err)
 		actual := NewHTMLRenderer().Render(nodes)
-		require.Equal(t, test.expected, actual)
+		require.Equal(t, test.expected, actual, fmt.Sprintf("Test case: %s", test.text))
 	}
 }

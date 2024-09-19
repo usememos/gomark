@@ -152,11 +152,25 @@ func (r *HTMLRenderer) renderBlockquote(node *ast.Blockquote) {
 }
 
 func (r *HTMLRenderer) renderList(node *ast.List) {
-	r.output.WriteString("<dl>")
+	switch node.Kind {
+	case ast.OrderedList:
+		r.output.WriteString("<ol>")
+	case ast.UnorderedList:
+		r.output.WriteString("<ul>")
+	case ast.DescrpitionList:
+		r.output.WriteString("<dl>")
+	}
 	for _, item := range node.Children {
 		r.RenderNodes([]ast.Node{item})
 	}
-	r.output.WriteString("</dl>")
+	switch node.Kind {
+	case ast.OrderedList:
+		r.output.WriteString("</ol>")
+	case ast.UnorderedList:
+		r.output.WriteString("</ul>")
+	case ast.DescrpitionList:
+		r.output.WriteString("</dl>")
+	}
 }
 
 func (r *HTMLRenderer) renderUnorderedListItem(node *ast.UnorderedListItem) {

@@ -113,9 +113,18 @@ func (n *Blockquote) Restore() string {
 	return result
 }
 
+type ListKind string
+
+const (
+	UnorderedList   ListKind = "ul"
+	OrderedList     ListKind = "ol"
+	DescrpitionList ListKind = "dl"
+)
+
 type List struct {
 	BaseBlock
 
+	Kind     ListKind
 	Children []Node
 }
 
