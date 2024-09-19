@@ -119,22 +119,45 @@ func mergeListItemNodes(nodes []ast.Node) []ast.Node {
 		switch nodes[i].(type) {
 		case *ast.OrderedListItem, *ast.UnorderedListItem, *ast.TaskListItem:
 			var listKind ast.ListKind
+			var indent int
 			switch nodes[i].(type) {
 			case *ast.OrderedListItem:
 				listKind = ast.OrderedList
+				indent = nodes[i].(*ast.OrderedListItem).Indent
 			case *ast.UnorderedListItem:
 				listKind = ast.UnorderedList
+				indent = nodes[i].(*ast.UnorderedListItem).Indent
 			case *ast.TaskListItem:
 				listKind = ast.DescrpitionList
+				indent = nodes[i].(*ast.TaskListItem).Indent
 			}
-			if prevResultNode == nil || prevResultNode.Type() != ast.ListNode || prevResultNode.(*ast.List).Kind != listKind {
+			indent = indent / 2
+			if prevResultNode == nil || prevResultNode.Type() != ast.ListNode || prevResultNode.(*ast.List).Kind != listKind || prevResultNode.(*ast.List).Indent > indent {
 				prevResultNode = &ast.List{
 					BaseBlock: ast.BaseBlock{},
 					Kind:      listKind,
+					Indent:    indent,
+					Children:  []ast.Node{nodes[i]},
 				}
 				result = append(result, prevResultNode)
+				continue
 			}
-			prevResultNode.(*ast.List).Children = append(prevResultNode.(*ast.List).Children, nodes[i])
+
+			listNode := prevResultNode.(*ast.List)
+			if listNode.Indent != indent {
+				parent := findPossibleParent(listNode, indent)
+				if parent == nil {
+					parent = &ast.List{
+						BaseBlock: ast.BaseBlock{},
+						Kind:      listKind,
+						Indent:    indent,
+					}
+					listNode.Children = append(listNode.Children, parent)
+				}
+				parent.Children = append(parent.Children, nodes[i])
+			} else {
+				listNode.Children = append(listNode.Children, nodes[i])
+			}
 		case *ast.LineBreak:
 			if prevResultNode != nil && prevResultNode.Type() == ast.ListNode &&
 				// Check if the prev node is not a line break node.
@@ -165,4 +188,21 @@ func mergeTextNodes(nodes []ast.Node) []ast.Node {
 		}
 	}
 	return result
+}
+
+func findPossibleParent(listNode *ast.List, indent int) *ast.List {
+	if listNode.Indent == indent {
+		return listNode
+	}
+	if listNode.Indent < indent {
+		return nil
+	}
+	if len(listNode.Children) == 0 {
+		return nil
+	}
+	lastChild := listNode.Children[len(listNode.Children)-1]
+	if lastChild.Type() != ast.ListNode {
+		return nil
+	}
+	return findPossibleParent(lastChild.(*ast.List), indent)
 }

@@ -125,6 +125,7 @@ type List struct {
 	BaseBlock
 
 	Kind     ListKind
+	Indent   int
 	Children []Node
 }
 
