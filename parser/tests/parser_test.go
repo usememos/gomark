@@ -174,7 +174,7 @@ func TestParser(t *testing.T) {
 					},
 				},
 				&ast.List{
-					Kind: ast.UnorderedList,
+					Kind: ast.DescrpitionList,
 					Children: []ast.Node{
 						&ast.TaskListItem{
 							Symbol:   tokenizer.Hyphen,
@@ -193,7 +193,7 @@ func TestParser(t *testing.T) {
 			text: "- [ ] hello\n- [x] world",
 			nodes: []ast.Node{
 				&ast.List{
-					Kind: ast.UnorderedList,
+					Kind: ast.DescrpitionList,
 					Children: []ast.Node{
 						&ast.TaskListItem{
 							Symbol:   tokenizer.Hyphen,
