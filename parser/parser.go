@@ -120,18 +120,19 @@ func mergeListItemNodes(nodes []ast.Node) []ast.Node {
 		case *ast.OrderedListItem, *ast.UnorderedListItem, *ast.TaskListItem:
 			var listKind ast.ListKind
 			var indent int
-			switch nodes[i].(type) {
+			switch item := nodes[i].(type) {
 			case *ast.OrderedListItem:
 				listKind = ast.OrderedList
-				indent = nodes[i].(*ast.OrderedListItem).Indent
+				indent = item.Indent
 			case *ast.UnorderedListItem:
 				listKind = ast.UnorderedList
-				indent = nodes[i].(*ast.UnorderedListItem).Indent
+				indent = item.Indent
 			case *ast.TaskListItem:
 				listKind = ast.DescrpitionList
-				indent = nodes[i].(*ast.TaskListItem).Indent
+				indent = item.Indent
 			}
-			indent = indent / 2
+
+			indent /= 2
 			if prevResultNode == nil || prevResultNode.Type() != ast.ListNode || prevResultNode.(*ast.List).Kind != listKind || prevResultNode.(*ast.List).Indent > indent {
 				prevResultNode = &ast.List{
 					BaseBlock: ast.BaseBlock{},
@@ -143,9 +144,12 @@ func mergeListItemNodes(nodes []ast.Node) []ast.Node {
 				continue
 			}
 
-			listNode := prevResultNode.(*ast.List)
+			listNode, ok := prevResultNode.(*ast.List)
+			if !ok {
+				continue
+			}
 			if listNode.Indent != indent {
-				parent := findPossibleParent(listNode, indent)
+				parent := findListPossibleParent(listNode, indent)
 				if parent == nil {
 					parent = &ast.List{
 						BaseBlock: ast.BaseBlock{},
@@ -190,7 +194,7 @@ func mergeTextNodes(nodes []ast.Node) []ast.Node {
 	return result
 }
 
-func findPossibleParent(listNode *ast.List, indent int) *ast.List {
+func findListPossibleParent(listNode *ast.List, indent int) *ast.List {
 	if listNode.Indent == indent {
 		return listNode
 	}
@@ -204,5 +208,5 @@ func findPossibleParent(listNode *ast.List, indent int) *ast.List {
 	if lastChild.Type() != ast.ListNode {
 		return nil
 	}
-	return findPossibleParent(lastChild.(*ast.List), indent)
+	return findListPossibleParent(lastChild.(*ast.List), indent)
 }
