@@ -334,6 +334,47 @@ func TestParser(t *testing.T) {
 								},
 							},
 						},
+						&ast.LineBreak{},
+						&ast.LineBreak{},
+					},
+				},
+				&ast.List{
+					Kind: ast.OrderedList,
+					Children: []ast.Node{
+						&ast.OrderedListItem{
+							Number: "1",
+							Children: []ast.Node{
+								&ast.Text{
+									Content: "ordered list item",
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+		{
+			text: "* unordered list item\nparagraph\n\n1. ordered list item",
+			nodes: []ast.Node{
+				&ast.List{
+					Kind: ast.UnorderedList,
+					Children: []ast.Node{
+						&ast.UnorderedListItem{
+							Symbol: tokenizer.Asterisk,
+							Children: []ast.Node{
+								&ast.Text{
+									Content: "unordered list item",
+								},
+							},
+						},
+						&ast.LineBreak{},
+					},
+				},
+				&ast.Paragraph{
+					Children: []ast.Node{
+						&ast.Text{
+							Content: "paragraph",
+						},
 					},
 				},
 				&ast.LineBreak{},

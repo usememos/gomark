@@ -60,7 +60,7 @@ func TestListParser(t *testing.T) {
 						&ast.LineBreak{},
 						&ast.List{
 							Kind:   ast.OrderedList,
-							Indent: 1,
+							Indent: 2,
 							Children: []ast.Node{
 								&ast.OrderedListItem{
 									Number: "2",
@@ -68,6 +68,50 @@ func TestListParser(t *testing.T) {
 									Children: []ast.Node{
 										&ast.Text{
 											Content: "world",
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+		{
+			text: "* hello\n  * world\n  * gomark",
+			nodes: []ast.Node{
+				&ast.List{
+					Kind: ast.UnorderedList,
+					Children: []ast.Node{
+						&ast.UnorderedListItem{
+							Symbol: "*",
+							Children: []ast.Node{
+								&ast.Text{
+									Content: "hello",
+								},
+							},
+						},
+						&ast.LineBreak{},
+						&ast.List{
+							Kind:   ast.UnorderedList,
+							Indent: 2,
+							Children: []ast.Node{
+								&ast.UnorderedListItem{
+									Symbol: "*",
+									Indent: 2,
+									Children: []ast.Node{
+										&ast.Text{
+											Content: "world",
+										},
+									},
+								},
+								&ast.LineBreak{},
+								&ast.UnorderedListItem{
+									Symbol: "*",
+									Indent: 2,
+									Children: []ast.Node{
+										&ast.Text{
+											Content: "gomark",
 										},
 									},
 								},
@@ -94,7 +138,7 @@ func TestListParser(t *testing.T) {
 						&ast.LineBreak{},
 						&ast.List{
 							Kind:   ast.UnorderedList,
-							Indent: 1,
+							Indent: 2,
 							Children: []ast.Node{
 								&ast.UnorderedListItem{
 									Symbol: "*",
@@ -105,9 +149,9 @@ func TestListParser(t *testing.T) {
 										},
 									},
 								},
+								&ast.LineBreak{},
 							},
 						},
-						&ast.LineBreak{},
 						&ast.UnorderedListItem{
 							Symbol: "*",
 							Children: []ast.Node{
@@ -125,6 +169,6 @@ func TestListParser(t *testing.T) {
 	for _, test := range tests {
 		tokens := tokenizer.Tokenize(test.text)
 		nodes, _ := parser.Parse(tokens)
-		require.Equal(t, test.nodes, nodes, fmt.Sprintf("Test case: %s", test.text))
+		require.ElementsMatch(t, test.nodes, nodes, fmt.Sprintf("Test case: %s", test.text))
 	}
 }

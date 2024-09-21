@@ -1,8 +1,6 @@
 package parser
 
 import (
-	"slices"
-
 	"github.com/usememos/gomark/ast"
 	"github.com/usememos/gomark/parser/tokenizer"
 )
@@ -55,7 +53,9 @@ func ParseBlockWithParsers(tokens []*tokenizer.Token, blockParsers []BlockParser
 			}
 		}
 	}
-	return mergeListItemNodes(nodes), nil
+
+	nodes = mergeListItemNodes(nodes)
+	return nodes, nil
 }
 
 var defaultInlineParsers = []InlineParser{
@@ -101,81 +101,59 @@ func ParseInlineWithParsers(tokens []*tokenizer.Token, inlineParsers []InlinePar
 }
 
 func mergeListItemNodes(nodes []ast.Node) []ast.Node {
-	if len(nodes) == 0 {
-		return nodes
-	}
-	result := []ast.Node{}
-	for i := 0; i < len(nodes); i++ {
-		var prevNode, nextNode, prevResultNode ast.Node
-		if i > 0 {
-			prevNode = nodes[i-1]
-		}
-		if i < len(nodes)-1 {
-			nextNode = nodes[i+1]
-		}
-		if len(result) > 0 {
-			prevResultNode = result[len(result)-1]
-		}
-		switch nodes[i].(type) {
-		case *ast.OrderedListItem, *ast.UnorderedListItem, *ast.TaskListItem:
-			var listKind ast.ListKind
-			var indent int
-			switch item := nodes[i].(type) {
-			case *ast.OrderedListItem:
-				listKind = ast.OrderedList
-				indent = item.Indent
-			case *ast.UnorderedListItem:
-				listKind = ast.UnorderedList
-				indent = item.Indent
-			case *ast.TaskListItem:
-				listKind = ast.DescrpitionList
-				indent = item.Indent
-			}
+	var result []ast.Node
+	var stack []*ast.List
 
-			indent /= 2
-			if prevResultNode == nil || prevResultNode.Type() != ast.ListNode || prevResultNode.(*ast.List).Kind != listKind || prevResultNode.(*ast.List).Indent > indent {
-				prevResultNode = &ast.List{
-					BaseBlock: ast.BaseBlock{},
-					Kind:      listKind,
-					Indent:    indent,
-					Children:  []ast.Node{nodes[i]},
-				}
-				result = append(result, prevResultNode)
-				continue
-			}
+	for _, node := range nodes {
+		nodeType := node.Type()
 
-			listNode, ok := prevResultNode.(*ast.List)
-			if !ok {
-				continue
+		// Handle line breaks.
+		if nodeType == ast.LineBreakNode {
+			// If the stack is not empty and the last node is a list node, add the line break to the list.
+			if len(stack) > 0 && len(result) > 0 && result[len(result)-1].Type() == ast.ListNode {
+				stack[len(stack)-1].Children = append(stack[len(stack)-1].Children, node)
+			} else {
+				result = append(result, node)
 			}
-			if listNode.Indent != indent {
-				parent := findListPossibleParent(listNode, indent)
-				if parent == nil {
-					parent = &ast.List{
-						BaseBlock: ast.BaseBlock{},
-						Kind:      listKind,
-						Indent:    indent,
-					}
-					listNode.Children = append(listNode.Children, parent)
+			continue
+		}
+
+		if ast.IsListItemNode(node) {
+			itemKind, itemIndent := ast.GetListItemKindAndIndent(node)
+
+			// Create a new List node if the stack is empty or the current item should be a child of the last item.
+			if len(stack) == 0 || (itemKind != stack[len(stack)-1].Kind || itemIndent > stack[len(stack)-1].Indent) {
+				newList := &ast.List{
+					Kind:     itemKind,
+					Indent:   itemIndent,
+					Children: []ast.Node{node},
 				}
-				parent.Children = append(parent.Children, nodes[i])
+
+				// Add the new List node to the stack or the result.
+				if len(stack) > 0 && itemIndent > stack[len(stack)-1].Indent {
+					stack[len(stack)-1].Children = append(stack[len(stack)-1].Children, newList)
+				} else {
+					result = append(result, newList)
+				}
+				stack = append(stack, newList)
 			} else {
-				listNode.Children = append(listNode.Children, nodes[i])
+				// Pop the stack until the current item should be a sibling of the last item.
+				for len(stack) > 0 && (itemKind != stack[len(stack)-1].Kind || itemIndent < stack[len(stack)-1].Indent) {
+					stack = stack[:len(stack)-1]
+				}
+
+				// Add the current item to the last List node in the stack or the result.
+				if len(stack) > 0 {
+					stack[len(stack)-1].Children = append(stack[len(stack)-1].Children, node)
+				} else {
+					result = append(result, node)
+				}
 			}
-		case *ast.LineBreak:
-			if prevResultNode != nil && prevResultNode.Type() == ast.ListNode &&
-				// Check if the prev node is not a line break node.
-				(prevNode == nil || prevNode.Type() != ast.LineBreakNode) &&
-				// Check if the next node is a list item node.
-				(nextNode == nil || slices.Contains([]ast.NodeType{ast.OrderedListItemNode, ast.UnorderedListItemNode, ast.TaskListItemNode}, nextNode.Type())) {
-				prevResultNode.(*ast.List).Children = append(prevResultNode.(*ast.List).Children, nodes[i])
-			} else {
-				result = append(result, nodes[i])
-			}
-		default:
-			result = append(result, nodes[i])
+		} else {
+			result = append(result, node)
 		}
 	}
+
 	return result
 }
 
@@ -192,21 +170,4 @@ func mergeTextNodes(nodes []ast.Node) []ast.Node {
 		}
 	}
 	return result
-}
-
-func findListPossibleParent(listNode *ast.List, indent int) *ast.List {
-	if listNode.Indent == indent {
-		return listNode
-	}
-	if listNode.Indent < indent {
-		return nil
-	}
-	if len(listNode.Children) == 0 {
-		return nil
-	}
-	lastChild := listNode.Children[len(listNode.Children)-1]
-	if lastChild.Type() != ast.ListNode {
-		return nil
-	}
-	return findListPossibleParent(lastChild.(*ast.List), indent)
 }
