@@ -151,6 +151,8 @@ func mergeListItemNodes(nodes []ast.Node) []ast.Node {
 			}
 		} else {
 			result = append(result, node)
+			// Reset the stack if the current node is not a list item node.
+			stack = nil
 		}
 	}
 

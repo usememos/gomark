@@ -17,6 +17,26 @@ func TestListParser(t *testing.T) {
 		nodes []ast.Node
 	}{
 		{
+			text: "1. hello\n\n",
+			nodes: []ast.Node{
+				&ast.List{
+					Kind: ast.OrderedList,
+					Children: []ast.Node{
+						&ast.OrderedListItem{
+							Number: "1",
+							Children: []ast.Node{
+								&ast.Text{
+									Content: "hello",
+								},
+							},
+						},
+						&ast.LineBreak{},
+						&ast.LineBreak{},
+					},
+				},
+			},
+		},
+		{
 			text: "1. hello\n2. world",
 			nodes: []ast.Node{
 				&ast.List{
@@ -157,6 +177,46 @@ func TestListParser(t *testing.T) {
 							Children: []ast.Node{
 								&ast.Text{
 									Content: "gomark",
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+		{
+			text: "* hello\nparagraph\n* world",
+			nodes: []ast.Node{
+				&ast.List{
+					Kind: ast.UnorderedList,
+					Children: []ast.Node{
+						&ast.UnorderedListItem{
+							Symbol: "*",
+							Children: []ast.Node{
+								&ast.Text{
+									Content: "hello",
+								},
+							},
+						},
+						&ast.LineBreak{},
+					},
+				},
+				&ast.Paragraph{
+					Children: []ast.Node{
+						&ast.Text{
+							Content: "paragraph",
+						},
+					},
+				},
+				&ast.LineBreak{},
+				&ast.List{
+					Kind: ast.UnorderedList,
+					Children: []ast.Node{
+						&ast.UnorderedListItem{
+							Symbol: "*",
+							Children: []ast.Node{
+								&ast.Text{
+									Content: "world",
 								},
 							},
 						},
