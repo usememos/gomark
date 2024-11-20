@@ -40,6 +40,18 @@ func TestTagParser(t *testing.T) {
 				Content: "tag",
 			},
 		},
+		// {
+		// 	text: "#endofsentence. more",
+		// 	node: &ast.Tag{
+		// 		Content: "endofsentence",
+		// 	},
+		// },
+		{
+			text: "#pause, for more",
+			node: &ast.Tag{
+				Content: "pause",
+			},
+		},
 	}
 
 	for _, test := range tests {
