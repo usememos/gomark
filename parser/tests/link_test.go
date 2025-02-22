@@ -43,6 +43,24 @@ func TestLinkParser(t *testing.T) {
 				URL:  "https://example.com",
 			},
 		},
+		{
+			text: `[\[link text\]](https://example.com)`,
+			node: &ast.Link{
+				Text: `[link text]`,
+				URL:  "https://example.com",
+			},
+		},
+		{
+			text: `[[link text\]](https://example.com)`,
+			node: &ast.Link{
+				Text: `[link text]`,
+				URL:  "https://example.com",
+			},
+		},
+		{
+			text: `[\[link text]](https://example.com)`,
+			node: nil,
+		},
 	}
 	for _, test := range tests {
 		tokens := tokenizer.Tokenize(test.text)
