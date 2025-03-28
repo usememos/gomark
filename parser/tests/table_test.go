@@ -85,6 +85,28 @@ func TestTableParser(t *testing.T) {
 				},
 			},
 		},
+		{
+			text: "| header |\n| --- |\n| cell\\|\\|cell |\n",
+			node: &ast.Table{
+				Header: []ast.Node{
+					&ast.Paragraph{
+						Children: []ast.Node{
+							&ast.Text{Content: "header"},
+						},
+					},
+				},
+				Delimiter: []string{"---"},
+				Rows: [][]ast.Node{
+					{
+						&ast.Paragraph{
+							Children: []ast.Node{
+								&ast.Text{Content: "cell||cell"},
+							},
+						},
+					},
+				},
+			},
+		},
 	}
 
 	for _, test := range tests {
