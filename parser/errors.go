@@ -2,6 +2,7 @@ package parser
 
 import (
 	"fmt"
+
 	"github.com/usememos/gomark/parser/tokenizer"
 )
 
@@ -104,8 +105,8 @@ func NewIncompleteElementError(element string, position int) *ParseError {
 
 // ParseResult wraps parsing results with error information.
 type ParseResult struct {
-	Success bool
-	Errors  []*ParseError
+	Success  bool
+	Errors   []*ParseError
 	Warnings []*ParseError
 }
 

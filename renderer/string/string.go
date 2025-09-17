@@ -1,3 +1,4 @@
+// Package string renders AST nodes into plain text output.
 package string
 
 import (
@@ -28,7 +29,7 @@ func NewStringRenderer() *StringRenderer {
 func (r *StringRenderer) RenderNode(node ast.Node) {
 	switch n := node.(type) {
 	case *ast.Document:
-		r.renderDocument(n)
+		r.renderDocumentNode(n)
 	case *ast.LineBreak:
 		r.renderLineBreak(n)
 	case *ast.Paragraph:
@@ -129,7 +130,7 @@ func (r *StringRenderer) RenderDocument(doc *ast.Document) string {
 	return r.output.String()
 }
 
-func (r *StringRenderer) renderDocument(node *ast.Document) {
+func (r *StringRenderer) renderDocumentNode(node *ast.Document) {
 	r.RenderNodes(node.Children)
 }
 
@@ -172,7 +173,7 @@ func (r *StringRenderer) renderUnorderedListItem(node *ast.UnorderedListItem) {
 }
 
 func (r *StringRenderer) renderOrderedListItem(node *ast.OrderedListItem) {
-	r.output.WriteString(fmt.Sprintf("%s. ", node.Number))
+	fmt.Fprintf(r.output, "%s. ", node.Number)
 	r.RenderNodes(node.Children)
 }
 

@@ -1,3 +1,4 @@
+// Package gomark exposes high-level parsing and rendering helpers.
 package gomark
 
 import (
@@ -73,7 +74,7 @@ func (e *Engine) Parse(markdown string) (*ast.Document, error) {
 }
 
 // Restore renders the AST document to markdown.
-func (e *Engine) Restore(doc *ast.Document) string {
+func (*Engine) Restore(doc *ast.Document) string {
 	if doc == nil {
 		return ""
 	}

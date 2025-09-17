@@ -27,9 +27,9 @@ func (d *Document) CloneMetadata() map[string]any {
 	if len(d.Metadata) == 0 {
 		return nil
 	}
-	copy := make(map[string]any, len(d.Metadata))
+	metadataCopy := make(map[string]any, len(d.Metadata))
 	for k, v := range d.Metadata {
-		copy[k] = v
+		metadataCopy[k] = v
 	}
-	return copy
+	return metadataCopy
 }

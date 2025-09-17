@@ -1,3 +1,4 @@
+// Package parser provides the core markdown parsing logic for gomark.
 package parser
 
 import (
@@ -145,7 +146,6 @@ func parseBlockWithParsersAndResult(tokens []*tokenizer.Token, blockParsers []Bl
 	return nodes, nil
 }
 
-
 func newDefaultBlockParsers() []BlockParser {
 	paragraph := internal.NewParagraphParser()
 	parsers := []BlockParser{
@@ -170,7 +170,7 @@ func newDefaultBlockParsers() []BlockParser {
 	return parsers
 }
 
-// ParseBlock is kept for backward compatibility - use ParseWithConfig for new code
+// ParseBlock is kept for backward compatibility - use ParseWithConfig for new code.
 func ParseBlock(tokens []*tokenizer.Token) ([]ast.Node, error) {
 	return ParseBlockWithParsers(tokens, newDefaultBlockParsers())
 }

@@ -1,3 +1,4 @@
+// Package renderer provides adapters for converting AST documents to various formats.
 package renderer
 
 import (
@@ -40,7 +41,7 @@ func NewRendererFactory() *RendererFactory {
 }
 
 // CreateRenderer creates a renderer of the specified type.
-func (f *RendererFactory) CreateRenderer(rendererType RendererType) Renderer {
+func (*RendererFactory) CreateRenderer(rendererType RendererType) Renderer {
 	switch rendererType {
 	case HTMLRenderer:
 		return NewHTMLRenderer()

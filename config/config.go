@@ -1,3 +1,4 @@
+// Package config provides configuration structures for the gomark parser.
 package config
 
 // ParserConfig holds configuration options for the parser.
@@ -188,6 +189,8 @@ func (c *ParserConfig) WithExtension(name string, enabled bool) *ParserConfig {
 		config.EnableExtensions.ReferencedContent = enabled
 	case "tags":
 		config.EnableExtensions.Tags = enabled
+	default:
+		return config
 	}
 	return config
 }

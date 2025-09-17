@@ -27,25 +27,22 @@ func (*CodeBlockParser) Match(tokens []*tokenizer.Token) (ast.Node, int) {
 		return nil, 0
 	}
 
-	// Check for new-style triple backtick token or legacy three separate tokens
-	if firstRow[0].Type == tokenizer.TripleBacktick {
-		// New tokenizer style
-	} else if len(firstRow) >= 3 && firstRow[0].Type == tokenizer.Backtick && firstRow[1].Type == tokenizer.Backtick && firstRow[2].Type == tokenizer.Backtick {
-		// Legacy tokenizer style
-	} else {
+	// Check for new-style triple backtick token or legacy three separate tokens.
+	isNewStyle := firstRow[0].Type == tokenizer.TripleBacktick
+	isLegacyStyle := len(firstRow) >= 3 && firstRow[0].Type == tokenizer.Backtick && firstRow[1].Type == tokenizer.Backtick && firstRow[2].Type == tokenizer.Backtick
+	if !isNewStyle && !isLegacyStyle {
 		return nil, 0
 	}
-	languageTokens := []*tokenizer.Token{}
-	if firstRow[0].Type == tokenizer.TripleBacktick {
-		// New tokenizer style - language tokens start at index 1
+
+	var languageTokens []*tokenizer.Token
+	if isNewStyle {
+		// New tokenizer style - language tokens start at index 1.
 		if len(firstRow) > 1 {
 			languageTokens = firstRow[1:]
 		}
-	} else {
-		// Legacy tokenizer style - language tokens start at index 3
-		if len(firstRow) > 3 {
-			languageTokens = firstRow[3:]
-		}
+	} else if len(firstRow) > 3 {
+		// Legacy tokenizer style - language tokens start at index 3.
+		languageTokens = firstRow[3:]
 	}
 
 	// Check if language is valid.

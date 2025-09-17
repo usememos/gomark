@@ -1,3 +1,4 @@
+// Package ast defines the abstract syntax tree nodes used by gomark.
 package ast
 
 type NodeType string

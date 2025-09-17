@@ -1,3 +1,4 @@
+// Package internal contains parser implementations used by gomark.
 package internal
 
 import (
@@ -5,12 +6,12 @@ import (
 	"github.com/usememos/gomark/parser/tokenizer"
 )
 
-// ParseInline parses inline tokens into AST nodes
+// ParseInline parses inline tokens into AST nodes.
 func ParseInline(tokens []*tokenizer.Token) ([]ast.Node, error) {
 	return ParseInlineWithParsers(tokens, getDefaultInlineParsers())
 }
 
-// ParseInlineWithParsers parses inline tokens using the provided parsers
+// ParseInlineWithParsers parses inline tokens using the provided parsers.
 func ParseInlineWithParsers(tokens []*tokenizer.Token, inlineParsers []InlineParser) ([]ast.Node, error) {
 	nodes := []ast.Node{}
 	for len(tokens) > 0 {
@@ -33,12 +34,12 @@ func ParseInlineWithParsers(tokens []*tokenizer.Token, inlineParsers []InlinePar
 	return mergeTextNodes(nodes), nil
 }
 
-// ParseBlock parses block tokens into AST nodes using default parsers
+// ParseBlock parses block tokens into AST nodes using default parsers.
 func ParseBlock(tokens []*tokenizer.Token) ([]ast.Node, error) {
 	return ParseBlockWithParsers(tokens, getDefaultBlockParsers())
 }
 
-// ParseBlockWithParsers parses block tokens using the provided parsers
+// ParseBlockWithParsers parses block tokens using the provided parsers.
 func ParseBlockWithParsers(tokens []*tokenizer.Token, blockParsers []BlockParser) ([]ast.Node, error) {
 	// Set lookahead parsers for any paragraph parsers
 	for _, parser := range blockParsers {
@@ -106,7 +107,7 @@ func ParseBlockWithParsers(tokens []*tokenizer.Token, blockParsers []BlockParser
 	return nodes, nil
 }
 
-// getDefaultInlineParsers returns the default set of inline parsers
+// getDefaultInlineParsers returns the default set of inline parsers.
 func getDefaultInlineParsers() []InlineParser {
 	return []InlineParser{
 		NewEscapingCharacterParser(),
@@ -131,7 +132,7 @@ func getDefaultInlineParsers() []InlineParser {
 	}
 }
 
-// getDefaultBlockParsers returns the default set of block parsers
+// getDefaultBlockParsers returns the default set of block parsers.
 func getDefaultBlockParsers() []BlockParser {
 	paragraph := NewParagraphParser()
 	parsers := []BlockParser{
@@ -151,7 +152,7 @@ func getDefaultBlockParsers() []BlockParser {
 	return parsers
 }
 
-// mergeTextNodes merges consecutive text nodes
+// mergeTextNodes merges consecutive text nodes.
 func mergeTextNodes(nodes []ast.Node) []ast.Node {
 	if len(nodes) == 0 {
 		return nodes
@@ -167,7 +168,7 @@ func mergeTextNodes(nodes []ast.Node) []ast.Node {
 	return result
 }
 
-// mergeListItemNodes merges list item nodes into list structures
+// mergeListItemNodes merges list item nodes into list structures.
 func mergeListItemNodes(nodes []ast.Node) []ast.Node {
 	var result []ast.Node
 	var stack []*ast.List

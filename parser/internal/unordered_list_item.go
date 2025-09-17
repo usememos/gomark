@@ -16,16 +16,18 @@ func (*UnorderedListItemParser) Match(tokens []*tokenizer.Token) (ast.Node, int)
 	indent := 0
 	consumedTokens := 0
 
-	// Handle both new-style consolidated spaces and legacy individual spaces
+	// Handle both new-style consolidated spaces and legacy individual spaces.
+spaceScan:
 	for i, token := range matchedTokens {
-		if token.Type == tokenizer.Space {
+		switch token.Type {
+		case tokenizer.Space:
 			indent++
 			consumedTokens = i + 1
-		} else if token.Type == tokenizer.MultipleSpaces {
-			indent = len(token.Value) // Count the actual spaces in the consolidated token
+		case tokenizer.MultipleSpaces:
+			indent = len(token.Value) // Count the actual spaces in the consolidated token.
 			consumedTokens = i + 1
-		} else {
-			break
+		default:
+			break spaceScan
 		}
 	}
 

@@ -46,7 +46,7 @@ func TestBlockquoteBlankLinesRoundtrip(t *testing.T) {
 		}
 
 		require.GreaterOrEqual(t, bnbkCount, 1, "Should have at least one blank line marker '>'")
-		t.Logf("✅ GitHub issue #19 RESOLVED: Blank lines are preserved in blockquotes")
+		t.Log("✅ GitHub issue #19 RESOLVED: Blank lines are preserved in blockquotes")
 	} else {
 		t.Fatal("Parser failed to parse blockquote")
 	}

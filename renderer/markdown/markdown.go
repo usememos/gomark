@@ -1,3 +1,4 @@
+// Package markdown renders AST nodes back into markdown text.
 package markdown
 
 import (

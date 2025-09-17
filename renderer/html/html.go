@@ -1,3 +1,4 @@
+// Package html renders AST nodes to HTML markup.
 package html
 
 import (
@@ -28,7 +29,7 @@ func NewHTMLRenderer() *HTMLRenderer {
 func (r *HTMLRenderer) RenderNode(node ast.Node) {
 	switch n := node.(type) {
 	case *ast.Document:
-		r.renderDocument(n)
+		r.renderDocumentNode(n)
 	case *ast.LineBreak:
 		r.renderLineBreak(n)
 	case *ast.Paragraph:
@@ -129,7 +130,7 @@ func (r *HTMLRenderer) RenderDocument(doc *ast.Document) string {
 	return r.output.String()
 }
 
-func (r *HTMLRenderer) renderDocument(node *ast.Document) {
+func (r *HTMLRenderer) renderDocumentNode(node *ast.Document) {
 	r.RenderNodes(node.Children)
 }
 
@@ -151,9 +152,9 @@ func (r *HTMLRenderer) renderCodeBlock(node *ast.CodeBlock) {
 
 func (r *HTMLRenderer) renderHeading(node *ast.Heading) {
 	element := fmt.Sprintf("h%d", node.Level)
-	r.output.WriteString(fmt.Sprintf("<%s>", element))
+	fmt.Fprintf(r.output, "<%s>", element)
 	r.RenderNodes(node.Children)
-	r.output.WriteString(fmt.Sprintf("</%s>", element))
+	fmt.Fprintf(r.output, "</%s>", element)
 }
 
 func (r *HTMLRenderer) renderHorizontalRule(_ *ast.HorizontalRule) {
@@ -167,25 +168,20 @@ func (r *HTMLRenderer) renderBlockquote(node *ast.Blockquote) {
 }
 
 func (r *HTMLRenderer) renderList(node *ast.List) {
+	listTag := "ul"
 	switch node.Kind {
 	case ast.OrderedList:
-		r.output.WriteString("<ol>")
-	case ast.UnorderedList:
-		r.output.WriteString("<ul>")
+		listTag = "ol"
 	case ast.DescrpitionList:
-		r.output.WriteString("<dl>")
+		listTag = "dl"
+	default:
+		// Keep default unordered list tag for unknown kinds.
 	}
+	fmt.Fprintf(r.output, "<%s>", listTag)
 	for _, item := range node.Children {
 		r.RenderNodes([]ast.Node{item})
 	}
-	switch node.Kind {
-	case ast.OrderedList:
-		r.output.WriteString("</ol>")
-	case ast.UnorderedList:
-		r.output.WriteString("</ul>")
-	case ast.DescrpitionList:
-		r.output.WriteString("</dl>")
-	}
+	fmt.Fprintf(r.output, "</%s>", listTag)
 }
 
 func (r *HTMLRenderer) renderUnorderedListItem(node *ast.UnorderedListItem) {
@@ -363,5 +359,5 @@ func (r *HTMLRenderer) renderSpoiler(node *ast.Spoiler) {
 }
 
 func (r *HTMLRenderer) renderHTMLElement(node *ast.HTMLElement) {
-	r.output.WriteString(fmt.Sprintf("<%s >", node.TagName))
+	fmt.Fprintf(r.output, "<%s >", node.TagName)
 }
