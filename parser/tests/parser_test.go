@@ -77,32 +77,56 @@ func TestParser(t *testing.T) {
 			},
 		},
 		{
+			text: "***Hello***",
+			nodes: []ast.Node{
+				&ast.Paragraph{
+					Children: []ast.Node{
+						&ast.BoldItalic{
+							Symbol: "*",
+							Children: []ast.Node{
+								&ast.Text{Content: "Hello"},
+							},
+						},
+					},
+				},
+			},
+		},
+		{
+			text: "***Hello _world_***",
+			nodes: []ast.Node{
+				&ast.Paragraph{
+					Children: []ast.Node{
+						&ast.BoldItalic{
+							Symbol: "*",
+							Children: []ast.Node{
+								&ast.Text{Content: "Hello "},
+								&ast.Italic{
+									Symbol: "_",
+									Children: []ast.Node{
+										&ast.Text{Content: "world"},
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+		{
 			text: "Hello **world**!\nHere is a new line.",
 			nodes: []ast.Node{
 				&ast.Paragraph{
 					Children: []ast.Node{
-						&ast.Text{
-							Content: "Hello ",
-						},
+						&ast.Text{Content: "Hello "},
 						&ast.Bold{
 							Symbol: "*",
 							Children: []ast.Node{
-								&ast.Text{
-									Content: "world",
-								},
+								&ast.Text{Content: "world"},
 							},
 						},
-						&ast.Text{
-							Content: "!",
-						},
-					},
-				},
-				&ast.LineBreak{},
-				&ast.Paragraph{
-					Children: []ast.Node{
-						&ast.Text{
-							Content: "Here is a new line.",
-						},
+						&ast.Text{Content: "!"},
+						&ast.LineBreak{},
+						&ast.Text{Content: "Here is a new line."},
 					},
 				},
 			},
@@ -255,21 +279,10 @@ func TestParser(t *testing.T) {
 			nodes: []ast.Node{
 				&ast.Paragraph{
 					Children: []ast.Node{
-						&ast.Text{
-							Content: "Hello",
-						},
-					},
-				},
-				&ast.LineBreak{},
-				&ast.Paragraph{
-					Children: []ast.Node{
-						&ast.Text{
-							Content: "world",
-						},
-						&ast.HTMLElement{
-							TagName:    "br",
-							Attributes: map[string]string{},
-						},
+						&ast.Text{Content: "Hello"},
+						&ast.LineBreak{},
+						&ast.Text{Content: "world"},
+						&ast.HTMLElement{TagName: "br", Attributes: map[string]string{}},
 					},
 				},
 			},
@@ -398,7 +411,7 @@ func TestParser(t *testing.T) {
 
 	for _, test := range tests {
 		tokens := tokenizer.Tokenize(test.text)
-		nodes, _ := parser.Parse(tokens)
-		require.Equal(t, test.nodes, nodes, fmt.Sprintf("Test case: %s", test.text))
+		doc, _ := parser.Parse(tokens)
+		require.Equal(t, test.nodes, doc.Children, fmt.Sprintf("Test case: %s", test.text))
 	}
 }

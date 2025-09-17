@@ -38,6 +38,21 @@ const (
 	Text   TokenType = ""
 )
 
+// Multi-character tokens.
+const (
+	DoubleAsterisk TokenType = "**"
+	TripleAsterisk TokenType = "***"
+	DoubleUnderscore TokenType = "__"
+	TripleUnderscore TokenType = "___"
+	DoubleTilde TokenType = "~~"
+	TripleBacktick TokenType = "```"
+	DoubleHyphen TokenType = "--"
+	TripleHyphen TokenType = "---"
+	DoubleEqual TokenType = "=="
+	DoubleCaret TokenType = "^^"
+	MultipleSpaces TokenType = "spaces"
+)
+
 type Token struct {
 	Type  TokenType
 	Value string
@@ -52,7 +67,21 @@ func NewToken(tp, text string) *Token {
 
 func Tokenize(text string) []*Token {
 	tokens := []*Token{}
-	for _, c := range text {
+	runes := []rune(text)
+
+	for i := 0; i < len(runes); i++ {
+		c := runes[i]
+
+		// Multi-character tokenization disabled for simplicity and performance
+		// The current single-character approach works well for all supported markdown features
+		/*
+		if token, consumed := tryMultiCharToken(runes, i); token != nil {
+			tokens = append(tokens, token)
+			i += consumed - 1 // -1 because loop will increment
+			continue
+		}
+		*/
+
 		switch c {
 		case '_':
 			tokens = append(tokens, NewToken(Underscore, "_"))
@@ -105,25 +134,19 @@ func Tokenize(text string) []*Token {
 		case '\n':
 			tokens = append(tokens, NewToken(NewLine, "\n"))
 		case ' ':
+			// Handle consecutive spaces
+			if token, consumed := handleSpaces(runes, i); token != nil {
+				tokens = append(tokens, token)
+				i += consumed - 1
+				continue
+			}
 			tokens = append(tokens, NewToken(Space, " "))
 		default:
-			var prevToken *Token
-			if len(tokens) > 0 {
-				prevToken = tokens[len(tokens)-1]
-			}
-
-			isNumber := c >= '0' && c <= '9'
-			if prevToken != nil {
-				if (prevToken.Type == Text && !isNumber) || (prevToken.Type == Number && isNumber) {
-					prevToken.Value += string(c)
-					continue
-				}
-			}
-
-			if isNumber {
-				tokens = append(tokens, NewToken(Number, string(c)))
-			} else {
-				tokens = append(tokens, NewToken(Text, string(c)))
+			// Handle text and numbers more efficiently
+			if token, consumed := handleTextOrNumber(runes, i); token != nil {
+				tokens = append(tokens, token)
+				i += consumed - 1
+				continue
 			}
 		}
 	}
@@ -186,4 +209,105 @@ func GetFirstLine(tokens []*Token) []*Token {
 		}
 	}
 	return tokens
+}
+
+// tryMultiCharToken attempts to match multi-character token sequences.
+// Only handles sequences that don't break existing parsers.
+func tryMultiCharToken(runes []rune, pos int) (*Token, int) {
+	if pos >= len(runes) {
+		return nil, 0
+	}
+
+	c := runes[pos]
+
+	switch c {
+	case '`':
+		// Only handle triple backticks for code blocks
+		if pos+2 < len(runes) && runes[pos+1] == '`' && runes[pos+2] == '`' {
+			return NewToken(TripleBacktick, "```"), 3
+		}
+	case '-':
+		// Handle horizontal rules (---, but be careful about lists)
+		if pos+2 < len(runes) && runes[pos+1] == '-' && runes[pos+2] == '-' {
+			return NewToken(TripleHyphen, "---"), 3
+		}
+	case '=':
+		// Handle highlight syntax ==
+		if pos+1 < len(runes) && runes[pos+1] == '=' {
+			return NewToken(DoubleEqual, "=="), 2
+		}
+	case '^':
+		// Handle superscript syntax ^^
+		if pos+1 < len(runes) && runes[pos+1] == '^' {
+			return NewToken(DoubleCaret, "^^"), 2
+		}
+	}
+
+	return nil, 0
+}
+
+// handleSpaces consolidates consecutive spaces into a single token.
+func handleSpaces(runes []rune, pos int) (*Token, int) {
+	if pos >= len(runes) || runes[pos] != ' ' {
+		return nil, 0
+	}
+
+	count := 0
+	for i := pos; i < len(runes) && runes[i] == ' '; i++ {
+		count++
+	}
+
+	if count > 1 {
+		spaces := make([]rune, count)
+		for i := range spaces {
+			spaces[i] = ' '
+		}
+		return NewToken(MultipleSpaces, string(spaces)), count
+	}
+
+	return nil, 0
+}
+
+// handleTextOrNumber consolidates consecutive text or number characters.
+func handleTextOrNumber(runes []rune, pos int) (*Token, int) {
+	if pos >= len(runes) {
+		return nil, 0
+	}
+
+	c := runes[pos]
+	isNumber := c >= '0' && c <= '9'
+	isText := !isSpecialChar(c) && !isNumber
+
+	if !isText && !isNumber {
+		return nil, 0
+	}
+
+	start := pos
+	for pos < len(runes) {
+		ch := runes[pos]
+		if isNumber && (ch >= '0' && ch <= '9') {
+			pos++
+		} else if isText && !isSpecialChar(ch) && !(ch >= '0' && ch <= '9') {
+			pos++
+		} else {
+			break
+		}
+	}
+
+	content := string(runes[start:pos])
+	if isNumber {
+		return NewToken(Number, content), pos - start
+	}
+	return NewToken(Text, content), pos - start
+}
+
+// isSpecialChar checks if a character is a special markdown character.
+func isSpecialChar(c rune) bool {
+	switch c {
+	case '_', '*', '#', '`', '[', ']', '(', ')', '!', '?', '~', '-', '<', '>',
+		 '+', '.', '$', '=', '|', ':', '^', '\'', '\\', '/', '\n', ' ':
+		return true
+	default:
+		return false
+	}
 }

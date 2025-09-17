@@ -228,7 +228,7 @@ func TestListParser(t *testing.T) {
 
 	for _, test := range tests {
 		tokens := tokenizer.Tokenize(test.text)
-		nodes, _ := parser.Parse(tokens)
-		require.ElementsMatch(t, test.nodes, nodes, fmt.Sprintf("Test case: %s", test.text))
+		doc, _ := parser.Parse(tokens)
+		require.ElementsMatch(t, test.nodes, doc.Children, fmt.Sprintf("Test case: %s", test.text))
 	}
 }

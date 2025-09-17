@@ -5,7 +5,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 	"github.com/usememos/gomark/ast"
-	"github.com/usememos/gomark/parser"
+	"github.com/usememos/gomark/parser/internal"
 	"github.com/usememos/gomark/parser/tokenizer"
 )
 
@@ -26,6 +26,15 @@ func TestItalicParser(t *testing.T) {
 					&ast.Text{
 						Content: "Hello",
 					},
+				},
+			},
+		},
+		{
+			text: "*`code`*",
+			node: &ast.Italic{
+				Symbol: "*",
+				Children: []ast.Node{
+					&ast.Code{Content: "code"},
 				},
 			},
 		},
@@ -100,11 +109,26 @@ func TestItalicParser(t *testing.T) {
 				},
 			},
 		},
+		{
+			text: "*Hello **world***",
+			node: &ast.Italic{
+				Symbol: "*",
+				Children: []ast.Node{
+					&ast.Text{Content: "Hello "},
+					&ast.Bold{
+						Symbol: "*",
+						Children: []ast.Node{
+							&ast.Text{Content: "world"},
+						},
+					},
+				},
+			},
+		},
 	}
 
 	for _, test := range tests {
 		tokens := tokenizer.Tokenize(test.text)
-		node, _ := parser.NewItalicParser().Match(tokens)
+		node, _ := internal.NewItalicParser().Match(tokens)
 		require.Equal(t, test.node, node)
 	}
 }

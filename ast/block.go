@@ -105,7 +105,13 @@ func (*Blockquote) Type() NodeType {
 func (n *Blockquote) Restore() string {
 	var result string
 	for i, child := range n.Children {
-		result += fmt.Sprintf("> %s", child.Restore())
+		if _, isLineBreak := child.(*LineBreak); isLineBreak {
+			// For line breaks in blockquotes, just add ">" without space
+			result += ">"
+		} else {
+			result += fmt.Sprintf("> %s", child.Restore())
+		}
+		// Add newline after each child except the last one
 		if i != len(n.Children)-1 {
 			result += "\n"
 		}

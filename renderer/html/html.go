@@ -27,6 +27,8 @@ func NewHTMLRenderer() *HTMLRenderer {
 // RenderNode renders a single AST node to HTML.
 func (r *HTMLRenderer) RenderNode(node ast.Node) {
 	switch n := node.(type) {
+	case *ast.Document:
+		r.renderDocument(n)
 	case *ast.LineBreak:
 		r.renderLineBreak(n)
 	case *ast.Paragraph:
@@ -116,6 +118,19 @@ func (r *HTMLRenderer) RenderNodes(nodes []ast.Node) {
 func (r *HTMLRenderer) Render(astRoot []ast.Node) string {
 	r.RenderNodes(astRoot)
 	return r.output.String()
+}
+
+// RenderDocument renders an AST document to HTML and returns the generated markup.
+func (r *HTMLRenderer) RenderDocument(doc *ast.Document) string {
+	if doc == nil {
+		return ""
+	}
+	r.RenderNodes(doc.Children)
+	return r.output.String()
+}
+
+func (r *HTMLRenderer) renderDocument(node *ast.Document) {
+	r.RenderNodes(node.Children)
 }
 
 func (r *HTMLRenderer) renderLineBreak(*ast.LineBreak) {
@@ -255,7 +270,7 @@ func (r *HTMLRenderer) renderItalic(node *ast.Italic) {
 
 func (r *HTMLRenderer) renderBoldItalic(node *ast.BoldItalic) {
 	r.output.WriteString("<strong><em>")
-	r.output.WriteString(node.Content)
+	r.RenderNodes(node.Children)
 	r.output.WriteString("</em></strong>")
 }
 

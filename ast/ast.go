@@ -2,8 +2,9 @@ package ast
 
 type NodeType string
 
-// Block nodes.
+// Root and block-level nodes.
 const (
+	DocumentNode          NodeType = "DOCUMENT"
 	LineBreakNode         NodeType = "LINE_BREAK"
 	ParagraphNode         NodeType = "PARAGRAPH"
 	CodeBlockNode         NodeType = "CODE_BLOCK"
@@ -54,7 +55,7 @@ type BaseNode struct {
 
 func IsBlockNode(node Node) bool {
 	switch node.Type() {
-	case ParagraphNode, CodeBlockNode, HeadingNode, HorizontalRuleNode, BlockquoteNode, ListNode, OrderedListItemNode, UnorderedListItemNode, TaskListItemNode, TableNode, EmbeddedContentNode:
+	case DocumentNode, ParagraphNode, CodeBlockNode, HeadingNode, HorizontalRuleNode, BlockquoteNode, ListNode, OrderedListItemNode, UnorderedListItemNode, TaskListItemNode, TableNode, EmbeddedContentNode:
 		return true
 	default:
 		return false

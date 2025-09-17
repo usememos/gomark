@@ -27,6 +27,8 @@ func NewStringRenderer() *StringRenderer {
 // RenderNode renders a single AST node to raw string.
 func (r *StringRenderer) RenderNode(node ast.Node) {
 	switch n := node.(type) {
+	case *ast.Document:
+		r.renderDocument(n)
 	case *ast.LineBreak:
 		r.renderLineBreak(n)
 	case *ast.Paragraph:
@@ -118,6 +120,19 @@ func (r *StringRenderer) Render(astRoot []ast.Node) string {
 	return r.output.String()
 }
 
+// RenderDocument renders an AST document to a plain string.
+func (r *StringRenderer) RenderDocument(doc *ast.Document) string {
+	if doc == nil {
+		return ""
+	}
+	r.RenderNodes(doc.Children)
+	return r.output.String()
+}
+
+func (r *StringRenderer) renderDocument(node *ast.Document) {
+	r.RenderNodes(node.Children)
+}
+
 func (r *StringRenderer) renderLineBreak(_ *ast.LineBreak) {
 	r.output.WriteString("\n")
 }
@@ -201,7 +216,7 @@ func (r *StringRenderer) renderItalic(node *ast.Italic) {
 }
 
 func (r *StringRenderer) renderBoldItalic(node *ast.BoldItalic) {
-	r.output.WriteString(node.Content)
+	r.RenderNodes(node.Children)
 }
 
 func (r *StringRenderer) renderCode(node *ast.Code) {

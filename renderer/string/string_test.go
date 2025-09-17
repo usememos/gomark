@@ -34,9 +34,9 @@ func TestStringRender(t *testing.T) {
 
 	for _, test := range tests {
 		tokens := tokenizer.Tokenize(test.text)
-		nodes, err := parser.Parse(tokens)
+		doc, err := parser.Parse(tokens)
 		require.NoError(t, err)
-		actual := NewStringRenderer().Render(nodes)
+		actual := NewStringRenderer().RenderDocument(doc)
 		require.Equal(t, test.expected, actual)
 	}
 }

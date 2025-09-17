@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/usememos/gomark/ast"
-	"github.com/usememos/gomark/parser"
+	"github.com/usememos/gomark/parser/internal"
 	"github.com/usememos/gomark/parser/tokenizer"
 )
 
@@ -50,7 +50,7 @@ func TestUnorderedListItemParser(t *testing.T) {
 
 	for _, test := range tests {
 		tokens := tokenizer.Tokenize(test.text)
-		node, _ := parser.NewUnorderedListItemParser().Match(tokens)
+		node, _ := internal.NewUnorderedListItemParser().Match(tokens)
 		require.Equal(t, test.node, node)
 	}
 }

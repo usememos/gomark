@@ -5,7 +5,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 	"github.com/usememos/gomark/ast"
-	"github.com/usememos/gomark/parser"
+	"github.com/usememos/gomark/parser/internal"
 	"github.com/usememos/gomark/parser/tokenizer"
 )
 
@@ -79,7 +79,7 @@ Hello World`,
 
 	for _, test := range tests {
 		tokens := tokenizer.Tokenize(test.text)
-		node, _ := parser.NewHeadingParser().Match(tokens)
+		node, _ := internal.NewHeadingParser().Match(tokens)
 		require.Equal(t, test.node, node)
 	}
 }

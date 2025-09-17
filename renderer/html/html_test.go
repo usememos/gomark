@@ -25,7 +25,7 @@ func TestHTMLRenderer(t *testing.T) {
 		},
 		{
 			text:     "> Hello\n> world!",
-			expected: `<blockquote><p>Hello</p><p>world!</p></blockquote>`,
+			expected: `<blockquote><p>Hello<br>world!</p></blockquote>`,
 		},
 		{
 			text:     "*Hello* world!",
@@ -38,6 +38,14 @@ func TestHTMLRenderer(t *testing.T) {
 		{
 			text:     "**Hello** world!",
 			expected: `<p><strong>Hello</strong> world!</p>`,
+		},
+		{
+			text:     "***Hello***",
+			expected: `<p><strong><em>Hello</em></strong></p>`,
+		},
+		{
+			text:     "***Hello _world_***",
+			expected: `<p><strong><em>Hello <em>world</em></em></strong></p>`,
 		},
 		{
 			text:     "#article #memo",
@@ -59,9 +67,9 @@ func TestHTMLRenderer(t *testing.T) {
 
 	for _, test := range tests {
 		tokens := tokenizer.Tokenize(test.text)
-		nodes, err := parser.Parse(tokens)
+		doc, err := parser.Parse(tokens)
 		require.NoError(t, err)
-		actual := NewHTMLRenderer().Render(nodes)
+		actual := NewHTMLRenderer().RenderDocument(doc)
 		require.Equal(t, test.expected, actual, fmt.Sprintf("Test case: %s", test.text))
 	}
 }

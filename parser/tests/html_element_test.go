@@ -5,7 +5,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 	"github.com/usememos/gomark/ast"
-	"github.com/usememos/gomark/parser"
+	"github.com/usememos/gomark/parser/internal"
 	"github.com/usememos/gomark/parser/tokenizer"
 )
 
@@ -25,7 +25,7 @@ func TestHTMLElementParser(t *testing.T) {
 
 	for _, test := range tests {
 		tokens := tokenizer.Tokenize(test.text)
-		node, _ := parser.NewHTMLElementParser().Match(tokens)
+		node, _ := internal.NewHTMLElementParser().Match(tokens)
 		require.Equal(t, test.node, node)
 	}
 }

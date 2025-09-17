@@ -5,7 +5,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 	"github.com/usememos/gomark/ast"
-	"github.com/usememos/gomark/parser"
+	"github.com/usememos/gomark/parser/internal"
 	"github.com/usememos/gomark/parser/tokenizer"
 )
 
@@ -29,22 +29,50 @@ func TestBoldItalicParser(t *testing.T) {
 		{
 			text: "***Hello***",
 			node: &ast.BoldItalic{
-				Symbol:  "*",
-				Content: "Hello",
+				Symbol: "*",
+				Children: []ast.Node{
+					&ast.Text{Content: "Hello"},
+				},
+			},
+		},
+		{
+			text: "___Hello___",
+			node: &ast.BoldItalic{
+				Symbol: "_",
+				Children: []ast.Node{
+					&ast.Text{Content: "Hello"},
+				},
 			},
 		},
 		{
 			text: "*** Hello ***",
 			node: &ast.BoldItalic{
-				Symbol:  "*",
-				Content: " Hello ",
+				Symbol: "*",
+				Children: []ast.Node{
+					&ast.Text{Content: " Hello "},
+				},
+			},
+		},
+		{
+			text: "***Hello _world_***",
+			node: &ast.BoldItalic{
+				Symbol: "*",
+				Children: []ast.Node{
+					&ast.Text{Content: "Hello "},
+					&ast.Italic{
+						Symbol: "_",
+						Children: []ast.Node{
+							&ast.Text{Content: "world"},
+						},
+					},
+				},
 			},
 		},
 	}
 
 	for _, test := range tests {
 		tokens := tokenizer.Tokenize(test.text)
-		node, _ := parser.NewBoldItalicParser().Match(tokens)
+		node, _ := internal.NewBoldItalicParser().Match(tokens)
 		require.Equal(t, test.node, node)
 	}
 }

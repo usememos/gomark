@@ -5,7 +5,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 	"github.com/usememos/gomark/ast"
-	"github.com/usememos/gomark/parser"
+	"github.com/usememos/gomark/parser/internal"
 	"github.com/usememos/gomark/parser/tokenizer"
 )
 
@@ -33,6 +33,16 @@ func TestParagraphParser(t *testing.T) {
 			},
 		},
 		{
+			text: "Hello\nworld",
+			node: &ast.Paragraph{
+				Children: []ast.Node{
+					&ast.Text{Content: "Hello"},
+					&ast.LineBreak{},
+					&ast.Text{Content: "world"},
+				},
+			},
+		},
+		{
 			text: "Hello world!\n",
 			node: &ast.Paragraph{
 				Children: []ast.Node{
@@ -56,7 +66,7 @@ func TestParagraphParser(t *testing.T) {
 
 	for _, test := range tests {
 		tokens := tokenizer.Tokenize(test.text)
-		node, _ := parser.NewParagraphParser().Match(tokens)
+		node, _ := internal.NewParagraphParser().Match(tokens)
 		require.Equal(t, test.node, node)
 	}
 }
