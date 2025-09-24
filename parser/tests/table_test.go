@@ -85,6 +85,70 @@ func TestTableParser(t *testing.T) {
 				},
 			},
 		},
+		{
+			text: "|A|B|\n|:---|---:|\n|C|D|\n",
+			node: &ast.Table{
+				Header: []ast.Node{
+					&ast.Paragraph{
+						Children: []ast.Node{
+							&ast.Text{Content: "A"},
+						},
+					},
+					&ast.Paragraph{
+						Children: []ast.Node{
+							&ast.Text{Content: "B"},
+						},
+					},
+				},
+				Delimiter: []string{":---", "---:"},
+				Rows: [][]ast.Node{
+					{
+						&ast.Paragraph{
+							Children: []ast.Node{
+								&ast.Text{Content: "C"},
+							},
+						},
+						&ast.Paragraph{
+							Children: []ast.Node{
+								&ast.Text{Content: "D"},
+							},
+						},
+					},
+				},
+			},
+		},
+		{
+			text: "Header|Column\n---|---\nValue|Data\n",
+			node: &ast.Table{
+				Header: []ast.Node{
+					&ast.Paragraph{
+						Children: []ast.Node{
+							&ast.Text{Content: "Header"},
+						},
+					},
+					&ast.Paragraph{
+						Children: []ast.Node{
+							&ast.Text{Content: "Column"},
+						},
+					},
+				},
+				Delimiter: []string{"---", "---"},
+				Rows: [][]ast.Node{
+					{
+						&ast.Paragraph{
+							Children: []ast.Node{
+								&ast.Text{Content: "Value"},
+							},
+						},
+						&ast.Paragraph{
+							Children: []ast.Node{
+								&ast.Text{Content: "Data"},
+							},
+						},
+					},
+				},
+			},
+		},
 	}
 
 	for _, test := range tests {
