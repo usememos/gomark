@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"sort"
 
-	"github.com/usememos/gomark/config"
 	"github.com/usememos/gomark/parser/internal"
 )
 
@@ -12,7 +11,6 @@ import (
 type ParserRegistry struct {
 	blockParsers  map[string]BlockParserFactory
 	inlineParsers map[string]InlineParserFactory
-	config        *config.ParserConfig
 }
 
 // BlockParserFactory creates block parsers.
@@ -21,23 +19,14 @@ type BlockParserFactory func() BlockParser
 // InlineParserFactory creates inline parsers.
 type InlineParserFactory func() InlineParser
 
-// ParserInfo holds metadata about a parser.
-type ParserInfo struct {
-	Name        string
-	Description string
-	Priority    int
-	Extension   string // Optional: which extension enables this parser
-}
 
-// NewParserRegistry creates a new parser registry.
-func NewParserRegistry(cfg *config.ParserConfig) *ParserRegistry {
+// NewParserRegistry creates a new parser registry with all parsers registered.
+func NewParserRegistry() *ParserRegistry {
 	registry := &ParserRegistry{
 		blockParsers:  make(map[string]BlockParserFactory),
 		inlineParsers: make(map[string]InlineParserFactory),
-		config:        cfg,
 	}
 
-	// Register default parsers
 	registry.registerDefaultParsers()
 	return registry
 }
@@ -62,50 +51,32 @@ func (r *ParserRegistry) UnregisterInlineParser(name string) {
 	delete(r.inlineParsers, name)
 }
 
-// GetBlockParsers returns enabled block parsers in priority order.
+// GetBlockParsers returns all block parsers in priority order.
 func (r *ParserRegistry) GetBlockParsers() []BlockParser {
 	var parsers []BlockParser
 
-	// Core parsers (always enabled)
-	coreParsers := []struct {
-		name    string
-		factory BlockParserFactory
-	}{
-		{"code_block", func() BlockParser { return internal.NewCodeBlockParser() }},
-		{"heading", func() BlockParser { return internal.NewHeadingParser() }},
-		{"horizontal_rule", func() BlockParser { return internal.NewHorizontalRuleParser() }},
-		{"blockquote", func() BlockParser { return internal.NewBlockquoteParser() }},
-		{"ordered_list", func() BlockParser { return internal.NewOrderedListItemParser() }},
-		{"unordered_list", func() BlockParser { return internal.NewUnorderedListItemParser() }},
+	// All block parsers in priority order (paragraph must be last)
+	parserNames := []string{
+		"code_block",
+		"heading",
+		"horizontal_rule",
+		"blockquote",
+		"ordered_list",
+		"unordered_list",
+		"table",
+		"task_list",
+		"math_block",
+		"embedded_content",
 	}
 
-	for _, p := range coreParsers {
-		if factory, exists := r.blockParsers[p.name]; exists {
+	// Add all parsers except paragraph
+	for _, name := range parserNames {
+		if factory, exists := r.blockParsers[name]; exists {
 			parsers = append(parsers, factory())
 		}
 	}
 
-	// Extension-based parsers
-	extensionParsers := []struct {
-		name      string
-		factory   BlockParserFactory
-		condition func() bool
-	}{
-		{"table", func() BlockParser { return internal.NewTableParser() }, func() bool { return r.config.EnableExtensions.Tables }},
-		{"task_list", func() BlockParser { return internal.NewTaskListItemParser() }, func() bool { return r.config.EnableExtensions.TaskLists }},
-		{"math_block", func() BlockParser { return internal.NewMathBlockParser() }, func() bool { return r.config.EnableExtensions.Math }},
-		{"embedded_content", func() BlockParser { return internal.NewEmbeddedContentParser() }, func() bool { return r.config.EnableExtensions.EmbeddedContent }},
-	}
-
-	for _, p := range extensionParsers {
-		if p.condition() {
-			if factory, exists := r.blockParsers[p.name]; exists {
-				parsers = append(parsers, factory())
-			}
-		}
-	}
-
-	// Paragraph parser should be last (lowest priority)
+	// Paragraph parser must be last (lowest priority)
 	var paragraph BlockParser = internal.NewParagraphParser()
 	if factory, exists := r.blockParsers["paragraph"]; exists {
 		paragraph = factory()
@@ -114,7 +85,6 @@ func (r *ParserRegistry) GetBlockParsers() []BlockParser {
 
 	// Set lookahead parsers for paragraph
 	if p, ok := paragraph.(*internal.ParagraphParser); ok {
-		// Convert BlockParser slice to BaseParser slice
 		baseParsers := make([]internal.BaseParser, len(parsers))
 		for i, bp := range parsers {
 			baseParsers[i] = bp
@@ -125,63 +95,40 @@ func (r *ParserRegistry) GetBlockParsers() []BlockParser {
 	return parsers
 }
 
-// GetInlineParsers returns enabled inline parsers in priority order.
+// GetInlineParsers returns all inline parsers in priority order.
 func (r *ParserRegistry) GetInlineParsers() []InlineParser {
 	var parsers []InlineParser
 
-	// Core parsers (always enabled, in priority order)
-	coreParsers := []struct {
-		name    string
-		factory InlineParserFactory
-	}{
-		{"escaping_character", func() InlineParser { return internal.NewEscapingCharacterParser() }},
-		{"line_break", func() InlineParser { return internal.NewLineBreakParser() }},
-		{"image", func() InlineParser { return internal.NewImageParser() }},
-		{"link", func() InlineParser { return internal.NewLinkParser() }},
-		{"bold_italic", func() InlineParser { return internal.NewBoldItalicParser() }},
-		{"bold", func() InlineParser { return internal.NewBoldParser() }},
-		{"italic", func() InlineParser { return internal.NewItalicParser() }},
-		{"code", func() InlineParser { return internal.NewCodeParser() }},
-		{"text", func() InlineParser { return internal.NewTextParser() }}, // Should be last
+	// All inline parsers in priority order (text must be last)
+	parserNames := []string{
+		"escaping_character",
+		"line_break",
+		"html_element",
+		"image",
+		"link",
+		"autolink",
+		"bold_italic",
+		"bold",
+		"italic",
+		"strikethrough",
+		"highlight",
+		"subscript",
+		"superscript",
+		"math",
+		"spoiler",
+		"referenced_content",
+		"tag",
+		"code",
 	}
 
-	// Add core parsers first
-	for _, p := range coreParsers {
-		if p.name == "text" {
-			continue // Handle text parser separately at the end
-		}
-		if factory, exists := r.inlineParsers[p.name]; exists {
+	// Add all parsers except text
+	for _, name := range parserNames {
+		if factory, exists := r.inlineParsers[name]; exists {
 			parsers = append(parsers, factory())
 		}
 	}
 
-	// Extension-based parsers
-	extensionParsers := []struct {
-		name      string
-		factory   InlineParserFactory
-		condition func() bool
-	}{
-		{"html_element", func() InlineParser { return internal.NewHTMLElementParser() }, func() bool { return r.config.AllowHTML }},
-		{"autolink", func() InlineParser { return internal.NewAutoLinkParser() }, func() bool { return r.config.EnableExtensions.Autolinks }},
-		{"strikethrough", func() InlineParser { return internal.NewStrikethroughParser() }, func() bool { return r.config.EnableExtensions.Strikethrough }},
-		{"highlight", func() InlineParser { return internal.NewHighlightParser() }, func() bool { return r.config.EnableExtensions.Highlighting }},
-		{"subscript", func() InlineParser { return internal.NewSubscriptParser() }, func() bool { return r.config.EnableExtensions.Subscript }},
-		{"superscript", func() InlineParser { return internal.NewSuperscriptParser() }, func() bool { return r.config.EnableExtensions.Superscript }},
-		{"math", func() InlineParser { return internal.NewMathParser() }, func() bool { return r.config.EnableExtensions.Math }},
-		{"spoiler", func() InlineParser { return internal.NewSpoilerParser() }, func() bool { return r.config.EnableExtensions.Spoilers }},
-		{"referenced_content", func() InlineParser { return internal.NewReferencedContentParser() }, func() bool { return r.config.EnableExtensions.ReferencedContent }},
-		{"tag", func() InlineParser { return internal.NewTagParser() }, func() bool { return r.config.EnableExtensions.Tags }},
-	}
-
-	for _, p := range extensionParsers {
-		if p.condition() {
-			if factory, exists := r.inlineParsers[p.name]; exists {
-				parsers = append(parsers, factory())
-			}
-		}
-	}
-
-	// Text parser should always be last (lowest priority)
+	// Text parser must be last (lowest priority)
 	if factory, exists := r.inlineParsers["text"]; exists {
 		parsers = append(parsers, factory())
 	}
@@ -221,34 +168,6 @@ func (r *ParserRegistry) HasInlineParser(name string) bool {
 	return exists
 }
 
-// UpdateConfig updates the registry's configuration.
-func (r *ParserRegistry) UpdateConfig(cfg *config.ParserConfig) {
-	r.config = cfg
-}
-
-// GetConfig returns the current configuration.
-func (r *ParserRegistry) GetConfig() *config.ParserConfig {
-	return r.config
-}
-
-// Clone creates a copy of the registry with the same parsers but a new config.
-func (r *ParserRegistry) Clone(cfg *config.ParserConfig) *ParserRegistry {
-	newRegistry := &ParserRegistry{
-		blockParsers:  make(map[string]BlockParserFactory),
-		inlineParsers: make(map[string]InlineParserFactory),
-		config:        cfg,
-	}
-
-	// Copy all registered parsers
-	for name, factory := range r.blockParsers {
-		newRegistry.blockParsers[name] = factory
-	}
-	for name, factory := range r.inlineParsers {
-		newRegistry.inlineParsers[name] = factory
-	}
-
-	return newRegistry
-}
 
 // registerDefaultParsers registers the built-in parsers.
 func (r *ParserRegistry) registerDefaultParsers() {

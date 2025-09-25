@@ -1,4 +1,7 @@
-// Package gomark exposes high-level parsing and rendering helpers.
+// Package gomark provides a fast, extensible markdown parser with zero-configuration usage.
+//
+// All markdown features are enabled by default, including HTML elements, tables, math,
+// highlighting, and more. Simply call Parse() to convert markdown to AST nodes.
 package gomark
 
 import (
@@ -23,7 +26,7 @@ func NewEngine(opts ...EngineOption) *Engine {
 	cfg := config.DefaultConfig()
 	engine := &Engine{
 		config:   cfg,
-		registry: parser.NewParserRegistry(cfg),
+		registry: parser.NewParserRegistry(),
 	}
 	for _, opt := range opts {
 		opt(engine)
@@ -35,29 +38,14 @@ func NewEngine(opts ...EngineOption) *Engine {
 func WithConfig(cfg *config.ParserConfig) EngineOption {
 	return func(e *Engine) {
 		e.config = cfg
-		e.registry = parser.NewParserRegistry(cfg)
 	}
 }
 
-// WithStrictMode enables or disables strict parsing mode.
-func WithStrictMode(strict bool) EngineOption {
-	return func(e *Engine) {
-		e.config = e.config.WithStrictMode(strict)
-		e.registry.UpdateConfig(e.config)
-	}
-}
-
-// WithExtension enables or disables a specific extension.
-func WithExtension(name string, enabled bool) EngineOption {
-	return func(e *Engine) {
-		e.config = e.config.WithExtension(name, enabled)
-		e.registry.UpdateConfig(e.config)
-	}
-}
 
 var defaultEngine = NewEngine()
 
 // Parse parses markdown text into an AST document using the default engine.
+// This uses DefaultConfig with all features enabled including HTML elements.
 func Parse(markdown string) (*ast.Document, error) {
 	return defaultEngine.Parse(markdown)
 }
@@ -65,6 +53,11 @@ func Parse(markdown string) (*ast.Document, error) {
 // Restore renders the document back to markdown using the default engine.
 func Restore(doc *ast.Document) string {
 	return defaultEngine.Restore(doc)
+}
+
+// NewMemosEngine creates an engine with default configuration and all features enabled.
+func NewMemosEngine() *Engine {
+	return NewEngine(WithConfig(config.DefaultConfig()))
 }
 
 // Parse parses markdown into an AST document.

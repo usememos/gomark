@@ -198,7 +198,7 @@ func TestParser(t *testing.T) {
 					},
 				},
 				&ast.List{
-					Kind: ast.DescrpitionList,
+					Kind: ast.DescriptionList,
 					Children: []ast.Node{
 						&ast.TaskListItem{
 							Symbol:   tokenizer.Hyphen,
@@ -217,7 +217,7 @@ func TestParser(t *testing.T) {
 			text: "- [ ] hello\n- [x] world",
 			nodes: []ast.Node{
 				&ast.List{
-					Kind: ast.DescrpitionList,
+					Kind: ast.DescriptionList,
 					Children: []ast.Node{
 						&ast.TaskListItem{
 							Symbol:   tokenizer.Hyphen,
@@ -282,7 +282,7 @@ func TestParser(t *testing.T) {
 						&ast.Text{Content: "Hello"},
 						&ast.LineBreak{},
 						&ast.Text{Content: "world"},
-						&ast.HTMLElement{TagName: "br", Attributes: map[string]string{}},
+						&ast.HTMLElement{TagName: "br", Attributes: map[string]string{}, IsSelfClosing: true},
 					},
 				},
 			},
@@ -296,8 +296,9 @@ func TestParser(t *testing.T) {
 							Content: "Hello ",
 						},
 						&ast.HTMLElement{
-							TagName:    "br",
-							Attributes: map[string]string{},
+							TagName:      "br",
+							Attributes:   map[string]string{},
+							IsSelfClosing: true,
 						},
 						&ast.Text{
 							Content: " world",

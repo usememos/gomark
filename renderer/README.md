@@ -21,7 +21,11 @@ gomark's renderers are designed for **simplicity and reliability**:
 - **Format-specific optimization**: Each renderer optimized for its target format
 - **Roundtrip accuracy**: Markdown renderer preserves original formatting where possible
 
-Recent improvements include fixing blockquote blank line rendering (GitHub issue #19).
+Recent improvements include:
+- ✅ **HTML Elements Support**: Added rendering for `<kbd>`, `<br>`, `<img>`, `<small>`, `<mark>`
+- ✅ **Enhanced HTML Renderer**: Proper attribute handling and self-closing tag support
+- ✅ **Security**: HTML attribute escaping and content sanitization
+- ✅ **Fixed blockquote blank lines** (GitHub issue #19)
 
 ## Core Architecture
 

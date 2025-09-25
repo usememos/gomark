@@ -4,6 +4,7 @@ package html
 import (
 	"bytes"
 	"fmt"
+	"strings"
 
 	"github.com/usememos/gomark/ast"
 )
@@ -172,7 +173,7 @@ func (r *HTMLRenderer) renderList(node *ast.List) {
 	switch node.Kind {
 	case ast.OrderedList:
 		listTag = "ol"
-	case ast.DescrpitionList:
+	case ast.DescriptionList:
 		listTag = "dl"
 	default:
 		// Keep default unordered list tag for unknown kinds.
@@ -359,5 +360,34 @@ func (r *HTMLRenderer) renderSpoiler(node *ast.Spoiler) {
 }
 
 func (r *HTMLRenderer) renderHTMLElement(node *ast.HTMLElement) {
-	fmt.Fprintf(r.output, "<%s >", node.TagName)
+	// Start tag with attributes
+	r.output.WriteString("<")
+	r.output.WriteString(node.TagName)
+
+	// Add attributes
+	for key, value := range node.Attributes {
+		fmt.Fprintf(r.output, ` %s="%s"`, key, escapeHTML(value))
+	}
+
+	if node.IsSelfClosing {
+		// Self-closing tag
+		r.output.WriteString(">")
+	} else {
+		// Container tag with children
+		r.output.WriteString(">")
+		if len(node.Children) > 0 {
+			r.RenderNodes(node.Children)
+		}
+		fmt.Fprintf(r.output, "</%s>", node.TagName)
+	}
+}
+
+// escapeHTML escapes HTML special characters in attribute values
+func escapeHTML(s string) string {
+	s = strings.ReplaceAll(s, "&", "&amp;")
+	s = strings.ReplaceAll(s, "<", "&lt;")
+	s = strings.ReplaceAll(s, ">", "&gt;")
+	s = strings.ReplaceAll(s, "\"", "&quot;")
+	s = strings.ReplaceAll(s, "'", "&#39;")
+	return s
 }

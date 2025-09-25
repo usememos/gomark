@@ -1,6 +1,6 @@
 # gomark
 
-A fast, extensible, and well-structured markdown parser for Go, inspired by [goldmark](https://github.com/yuin/goldmark) but optimized for simplicity and performance.
+A fast, extensible, and well-structured markdown parser for Go, optimized for simplicity and performance.
 
 ## Features
 
@@ -29,9 +29,11 @@ A fast, extensible, and well-structured markdown parser for Go, inspired by [gol
 - **Tags**: `#hashtag` syntax
 - **Referenced Content**: `[[wiki-style]]` links
 - **Embedded Content**: `![[embeds]]`
-- **HTML Elements**: Basic HTML tag support
+- **HTML Elements**: `<kbd>`, `<br>`, `<img>`, `<small>`, `<mark>`, and more
 
 ## Quick Start
+
+gomark is designed for **zero-configuration usage** - all features are enabled by default:
 
 ```go
 package main
@@ -39,17 +41,35 @@ package main
 import (
     "fmt"
     "github.com/usememos/gomark"
+    "github.com/usememos/gomark/renderer/html"
 )
 
 func main() {
-    // Parse markdown
-    markdown := "# Hello\n\nThis is **bold** and *italic* text."
+    // All features enabled by default - no configuration needed!
+    markdown := `# Hello Memos!
+
+**Bold** and *italic* text with ==highlighting==.
+
+Press <kbd>Ctrl</kbd>+<kbd>C</kbd> to copy.
+
+Math: $E = mc^2$ and task lists:
+- [x] HTML elements supported
+- [ ] Even more features coming
+
+#gomark ||works great||!`
+
+    // Parse with all features enabled
     doc, err := gomark.Parse(markdown)
     if err != nil {
         panic(err)
     }
 
-    // Restore back to markdown
+    // Render to HTML
+    renderer := html.NewHTMLRenderer()
+    html := renderer.RenderDocument(doc)
+    fmt.Println(html)
+
+    // Or restore back to markdown
     restored := gomark.Restore(doc)
     fmt.Println(restored)
 }
@@ -59,19 +79,18 @@ func main() {
 
 ### Custom Configuration
 
+While gomark works great with zero configuration, you can customize it if needed:
+
 ```go
 import (
     "github.com/usememos/gomark"
     "github.com/usememos/gomark/config"
 )
 
-// Create engine with custom configuration
-engine := gomark.NewEngine(
-    gomark.WithConfig(config.StrictConfig()),           // Use strict CommonMark
-    gomark.WithExtension("tables", false),              // Disable tables
-    gomark.WithExtension("math", true),                 // Enable math
-    gomark.WithStrictMode(true),                        // Enable strict parsing
-)
+// Customize limits if needed
+engine := gomark.NewEngine(gomark.WithConfig(
+    config.DefaultConfig().WithMaxDepth(100).WithMaxFileSize(1024 * 1024), // 1MB limit
+))
 
 doc, err := engine.Parse(markdown)
 ```
@@ -100,28 +119,23 @@ textOutput := stringRenderer.RenderDocument(doc)
 markdownOutput := gomark.Restore(doc)
 ```
 
-### Configuration Options
+### Available Configurations
 
 ```go
 import "github.com/usememos/gomark/config"
 
-// Default configuration (all extensions enabled)
+// Default configuration: all features enabled with generous limits
 cfg := config.DefaultConfig()
 
-// Strict CommonMark configuration
-cfg := config.StrictConfig()
-
-// Custom configuration
+// Custom limits if needed
 cfg := config.DefaultConfig().
-    WithExtension("tables", false).
-    WithExtension("math", true).
-    WithStrictMode(true).
-    WithSafeMode(true)
+    WithMaxDepth(50).                   // Limit nesting depth
+    WithMaxFileSize(1024 * 1024)        // 1MB file size limit
 ```
 
 ## Architecture
 
-gomark follows a clean, modular architecture inspired by goldmark:
+gomark follows a clean, modular architecture:
 
 ```
 gomark/
@@ -192,11 +206,13 @@ cfg = cfg.WithSafeMode(true)
 
 ## Recent Improvements
 
+- ✅ **Phase 1 HTML Elements**: Added support for `<kbd>`, `<br>`, `<img>`, `<small>`, `<mark>`
+- ✅ **Simplified Configuration**: Zero-config usage with sensible defaults
+- ✅ **Enhanced HTML Parsing**: Proper attribute handling and self-closing tag support
 - ✅ **Fixed blockquote blank lines** (GitHub issue #19)
-- ✅ **Refactored to goldmark-style architecture**
+- ✅ **Refactored to modular architecture**
 - ✅ **Improved package organization** with public APIs
-- ✅ **Enhanced test coverage**
-- ✅ **Better documentation**
+- ✅ **Enhanced test coverage** with 26+ HTML element test cases
 
 ## Contributing
 
@@ -212,4 +228,4 @@ This project is part of the [Memos](https://github.com/usememos/memos) ecosystem
 
 ## Inspiration
 
-Inspired by [goldmark](https://github.com/yuin/goldmark) but designed for simplicity, performance, and ease of use. While goldmark provides comprehensive CommonMark compliance with complex extensibility, gomark focuses on practical markdown parsing with clean, maintainable code.
+Designed for simplicity, performance, and ease of use. gomark focuses on practical markdown parsing with clean, maintainable code.

@@ -270,6 +270,18 @@ func (r *StringRenderer) renderSpoiler(node *ast.Spoiler) {
 	r.output.WriteString(node.Content)
 }
 
-func (r *StringRenderer) renderHTMLElement(*ast.HTMLElement) {
-	r.output.WriteString("\n")
+func (r *StringRenderer) renderHTMLElement(node *ast.HTMLElement) {
+	if node.IsSelfClosing {
+		// Self-closing elements like <br> add line break, <img> is ignored in plain text
+		if node.TagName == "br" {
+			r.output.WriteString("\n")
+		}
+		// img elements are ignored in plain text output
+		return
+	}
+
+	// Container elements - render their content
+	if len(node.Children) > 0 {
+		r.RenderNodes(node.Children)
+	}
 }

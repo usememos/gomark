@@ -286,8 +286,10 @@ func (n *Spoiler) Restore() string {
 type HTMLElement struct {
 	BaseInline
 
-	TagName    string
-	Attributes map[string]string
+	TagName       string
+	Attributes    map[string]string
+	Children      []Node // For container elements like <kbd>, <small>, <mark>
+	IsSelfClosing bool   // For self-closing elements like <br>, <img>
 }
 
 func (*HTMLElement) Type() NodeType {
@@ -303,5 +305,26 @@ func (n *HTMLElement) Restore() string {
 	if len(attributes) > 0 {
 		attrStr = " " + strings.Join(attributes, " ")
 	}
-	return fmt.Sprintf("<%s%s />", n.TagName, attrStr)
+
+	if n.IsSelfClosing {
+		return fmt.Sprintf("<%s%s />", n.TagName, attrStr)
+	}
+
+	// Container element with children
+	childrenStr := ""
+	if len(n.Children) == 1 {
+		// For simple text content elements like <kbd>text</kbd>
+		if textNode, ok := n.Children[0].(*Text); ok {
+			childrenStr = textNode.Content
+		} else {
+			childrenStr = n.Children[0].Restore()
+		}
+	} else {
+		// For complex nested content
+		for _, child := range n.Children {
+			childrenStr += child.Restore()
+		}
+	}
+
+	return fmt.Sprintf("<%s%s>%s</%s>", n.TagName, attrStr, childrenStr, n.TagName)
 }

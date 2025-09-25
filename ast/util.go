@@ -16,7 +16,7 @@ func GetListItemKindAndIndent(node Node) (ListKind, int) {
 	case *UnorderedListItem:
 		return UnorderedList, n.Indent
 	case *TaskListItem:
-		return DescrpitionList, n.Indent
+		return DescriptionList, n.Indent
 	default:
 		return "", 0
 	}

@@ -6,129 +6,54 @@ The `config` package provides configuration management for the gomark markdown p
 
 This package centralizes all configuration options for the markdown parser, allowing fine-grained control over parsing behavior, enabled extensions, and safety features.
 
+**Note**: For most use cases, **no configuration is needed** - gomark works great with defaults!
+
 ## Design Philosophy
 
-gomark's configuration system is designed for **ease of use and flexibility**:
+gomark's configuration system is designed for **extreme simplicity**:
 
-- **Fluent API**: Method chaining for readable configuration
-- **Sensible defaults**: DefaultConfig() works well for most use cases
-- **Extension control**: Fine-grained enable/disable of features
-- **Safety options**: Built-in protection against malicious content
+- **Zero-config by default**: All features enabled out of the box for memos
+- **Minimal configuration**: Only MaxDepth and MaxFileSize need customization
+- **Single configuration**: DefaultConfig with sensible defaults for all use cases
+- **All extensions always enabled**: No complex feature toggling needed
 - **Immutable configs**: Configuration methods return new instances for safety
 
 ## Core Types
 
 ### ParserConfig
 
-The main configuration structure that controls parser behavior:
+The main configuration structure that controls parser limits:
 
 ```go
 type ParserConfig struct {
-    EnableExtensions ExtensionConfig
-    StrictMode       bool
-    MaxDepth         int
-    AllowHTML        bool
-    SafeMode         bool
-    MaxFileSize      int64
+    MaxDepth    int   // Maximum nesting depth to prevent stack overflow
+    MaxFileSize int64 // Maximum file size that can be parsed in bytes
 }
 ```
 
 #### Fields
 
-- **EnableExtensions**: Controls which markdown extensions are enabled
-- **StrictMode**: When true, uses strict CommonMark parsing rules
-- **MaxDepth**: Limits maximum nesting depth to prevent stack overflow (default: 100)
-- **AllowHTML**: Whether raw HTML is allowed in markdown (default: true)
-- **SafeMode**: Whether to sanitize potentially dangerous content (default: false)
-- **MaxFileSize**: Maximum file size that can be parsed in bytes (default: 10MB)
+- **MaxDepth**: Limits maximum nesting depth to prevent stack overflow (default: 200 for memos)
+- **MaxFileSize**: Maximum file size that can be parsed in bytes (default: 50MB for memos)
 
-### ExtensionConfig
+All markdown extensions (tables, math, HTML elements, etc.) are **always enabled** - no configuration needed!
 
-Controls which markdown extensions are enabled:
-
-```go
-type ExtensionConfig struct {
-    Tables            bool  // Table parsing
-    Strikethrough     bool  // ~~strikethrough~~ syntax
-    Autolinks         bool  // Automatic URL linking
-    TaskLists         bool  // - [ ] and - [x] syntax
-    Math              bool  // $inline$ and $$block$$ math
-    Highlighting      bool  // ==highlight== syntax
-    Subscript         bool  // ~subscript~ syntax
-    Superscript       bool  // ^superscript^ syntax
-    Spoilers          bool  // ||spoiler|| syntax
-    EmbeddedContent   bool  // ![[content]] syntax
-    ReferencedContent bool  // [[references]] syntax
-    Tags              bool  // #tag syntax
-}
-```
-
-## Predefined Configurations
+## Configuration
 
 ### DefaultConfig()
 
-Returns a configuration with all extensions enabled and relaxed parsing:
+Returns the standard configuration with sensible defaults for all use cases:
 
 ```go
 config := config.DefaultConfig()
-// All extensions enabled
-// StrictMode: false
-// AllowHTML: true
-// SafeMode: false
-```
-
-### StrictConfig()
-
-Returns a configuration for strict CommonMark compliance:
-
-```go
-config := config.StrictConfig()
-// Only CommonMark-compatible features enabled
-// StrictMode: true
-// Most extensions disabled
+// MaxDepth: 200 (allow complex nested content)
+// MaxFileSize: 50MB (for large documents with embedded content)
+// All extensions enabled by default
 ```
 
 ## Configuration Methods
 
-### WithStrictMode(strict bool)
-
-Creates a new config with strict mode enabled/disabled:
-
-```go
-config := cfg.WithStrictMode(true)
-```
-
-### WithExtension(name string, enabled bool)
-
-Enables or disables a specific extension by name:
-
-```go
-config := cfg.WithExtension("tables", false)
-config = config.WithExtension("math", true)
-```
-
-#### Supported Extension Names
-
-- `"tables"` - Table parsing
-- `"strikethrough"` - Strikethrough text
-- `"autolinks"` - Automatic URL linking
-- `"tasklists"` - Task list items
-- `"math"` - Math expressions
-- `"highlighting"` - Text highlighting
-- `"subscript"` - Subscript text
-- `"superscript"` - Superscript text
-- `"spoilers"` - Spoiler text
-- `"embedded"` - Embedded content
-- `"references"` - Referenced content
-- `"tags"` - Tag syntax
-
-### WithSafeMode(safe bool)
-
-Enables or disables safe mode:
-
-```go
-config := cfg.WithSafeMode(true)
-```
+Only two methods are available for customizing limits:
 
 ### WithMaxDepth(depth int)
 
@@ -138,60 +63,70 @@ Sets the maximum parsing depth:
 config := cfg.WithMaxDepth(50)
 ```
 
+### WithMaxFileSize(size int64)
+
+Sets the maximum file size:
+
+```go
+config := cfg.WithMaxFileSize(1024 * 1024) // 1MB
+```
+
 ## Usage Examples
 
-### Basic Usage
+### Zero Configuration (Recommended)
+
+```go
+import "github.com/usememos/gomark"
+
+// No configuration needed - all features work out of the box!
+doc, err := gomark.Parse("Press <kbd>Ctrl</kbd> with **bold** and ==highlighting==")
+```
+
+### Basic Configuration Usage
 
 ```go
 import "github.com/usememos/gomark/config"
 
-// Use default configuration
+// Default configuration - all features enabled
 cfg := config.DefaultConfig()
-
-// Create strict CommonMark parser
-strictCfg := config.StrictConfig()
 ```
 
 ### Custom Configuration
 
 ```go
-// Start with defaults and customize
-cfg := config.DefaultConfig()
-cfg = cfg.WithStrictMode(true)
-cfg = cfg.WithExtension("tables", false)
-cfg = cfg.WithSafeMode(true)
+// Customize limits if needed
+cfg := config.DefaultConfig().
+    WithMaxDepth(100).                  // Limit nesting depth
+    WithMaxFileSize(1024 * 1024)        // 1MB file size limit
 ```
 
 ### Configuration for Different Use Cases
 
-#### Blog Content (Safe)
+#### Most Use Cases (Recommended)
 ```go
-cfg := config.DefaultConfig().
-    WithSafeMode(true).
-    WithExtension("math", false).
-    WithMaxDepth(50)
+cfg := config.DefaultConfig()
+// All features enabled with generous limits - works great for most needs!
 ```
 
-#### Documentation (Full Featured)
+#### Memory-Constrained Environments
 ```go
 cfg := config.DefaultConfig().
-    WithExtension("tables", true).
-    WithExtension("math", true).
-    WithStrictMode(false)
+    WithMaxDepth(50).                 // Limit nesting depth
+    WithMaxFileSize(1024 * 1024)      // 1MB file size limit
 ```
 
-#### Strict CommonMark Only
+#### High-Performance Applications
 ```go
-cfg := config.StrictConfig().
-    WithSafeMode(true)
+cfg := config.DefaultConfig().
+    WithMaxDepth(20).                 // Very shallow nesting
+    WithMaxFileSize(100 * 1024)       // 100KB file limit
 ```
 
 ## Security Considerations
 
-- **SafeMode**: When enabled, sanitizes potentially dangerous content
-- **AllowHTML**: Controls whether raw HTML is processed
 - **MaxDepth**: Prevents stack overflow from deeply nested structures
 - **MaxFileSize**: Prevents processing of excessively large files
+- **HTML Elements**: All supported HTML elements are safe and commonly used
 
 ## Integration
 
@@ -211,40 +146,6 @@ engine := gomark.NewEngine(
 registry := parser.NewParserRegistry(cfg)
 ```
 
-## Configuration Best Practices
-
-### For Different Use Cases
-
-**Blog/Content Sites** (balanced features + safety):
-```go
-cfg := config.DefaultConfig().
-    WithSafeMode(true).
-    WithExtension("math", false).       // Disable if not needed
-    WithExtension("embedded", false)    // Disable advanced features
-```
-
-**Documentation** (full features):
-```go
-cfg := config.DefaultConfig().
-    WithExtension("tables", true).
-    WithExtension("math", true).
-    WithStrictMode(false)               // Allow extensions
-```
-
-**Strict CommonMark** (standards compliance):
-```go
-cfg := config.StrictConfig().
-    WithSafeMode(true)                  // Extra safety
-```
-
-**High Performance** (minimal features):
-```go
-cfg := config.DefaultConfig().
-    WithExtension("tables", false).
-    WithExtension("math", false).
-    WithExtension("highlighting", false).
-    WithExtension("spoilers", false)
-```
 
 ## Extension Impact
 

@@ -28,7 +28,7 @@ gomark is built on the principle of **pragmatic simplicity**:
 - **Reusability**: Tokens can be reused by multiple parsers
 - **Memory Efficiency**: Tokens reference original string data
 
-**Alternative Considered**: Text-based parsing (like goldmark)
+**Alternative Considered**: Text-based parsing
 **Why Rejected**: Added complexity without clear benefits for our use cases
 
 ### 2. Simple AST Interface ✅
@@ -48,7 +48,7 @@ type Node interface {
 - **Focused**: Only implements what's actually needed
 - **Memory Efficient**: No overhead for unused tree navigation features
 
-**Alternative Considered**: Complex tree interface (like goldmark)
+**Alternative Considered**: Complex tree interface
 **Why Rejected**: Analysis showed no actual usage of tree navigation in our codebase
 
 ### 3. Stateless Parsers ✅
@@ -106,7 +106,7 @@ const ParagraphNode NodeType = "PARAGRAPH"
 
 ### Public vs Internal
 
-**Public Packages** (goldmark-style):
+**Public Packages**:
 ```
 ├── ast/              # AST definitions - users need access
 ├── config/           # Configuration - users need to configure
@@ -122,7 +122,7 @@ const ParagraphNode NodeType = "PARAGRAPH"
 **Rationale**:
 - Public APIs allow extensibility where it matters
 - Internal packages keep implementation details hidden
-- Follows goldmark patterns for familiarity
+- Clean separation of concerns
 
 ## Performance Optimizations
 
@@ -171,18 +171,7 @@ These are **conscious decisions**, not oversights:
 ### Package Refactoring
 **Problem**: Everything was in `internal/` packages
 **Solution**: Moved key packages to public for extensibility
-**Result**: goldmark-style architecture with better extensibility
-
-## Comparison with goldmark
-
-| Aspect | goldmark | gomark |
-|--------|----------|--------|
-| **Complexity** | High | Low |
-| **Performance** | Good | Excellent |
-| **Extensibility** | Very High | Moderate |
-| **Maintainability** | Moderate | High |
-| **Learning Curve** | Steep | Gentle |
-| **Feature Set** | Comprehensive | Focused |
+**Result**: Modular architecture with better extensibility
 
 ## When to Choose gomark
 
@@ -191,12 +180,51 @@ These are **conscious decisions**, not oversights:
 - You want simple, maintainable code
 - You're building applications, not markdown libraries
 - You need good performance with moderate extensibility
+- You want zero-configuration setup with all features enabled
 
-❌ **Choose goldmark when**:
-- You need maximum extensibility
-- You're building a markdown processing library
-- You need complex AST transformations
-- You need full CommonMark compliance edge cases
+## Recent Architecture Evolutions
+
+### HTML Elements Support (Phase 1) ✅
+
+**Addition**: Added support for essential HTML elements: `<kbd>`, `<br>`, `<img>`, `<small>`, `<mark>`
+
+**Approach**:
+- **Reused existing `HTMLElementNode`** rather than creating separate node types
+- **Enhanced with `Children` and `IsSelfClosing`** fields for flexibility
+- **Smart parsing**: Different strategies for self-closing vs container elements
+- **Attribute handling**: Proper parsing with quote support and sanitization
+- **Security-first**: HTML-escaped attributes and content validation
+
+**Rationale**:
+- These elements have no markdown equivalents (can't be achieved with existing syntax)
+- Essential for documentation and note-taking (especially `<kbd>` for shortcuts)
+- CommonMark and GFM standards support for these elements
+
+### Configuration Simplification ✅
+
+**Change**: Simplified configuration to "zero-config by default"
+
+**Before**:
+```go
+// Required configuration for HTML elements
+cfg := config.DefaultConfig().WithAllowHTML(true)
+engine := gomark.NewEngine(gomark.WithConfig(cfg))
+```
+
+**After**:
+```go
+// HTML elements work by default - no config needed!
+doc, err := gomark.Parse("Press <kbd>Ctrl</kbd> to copy")
+```
+
+**New Configuration Approach**:
+1. **`gomark.Parse()`** → Uses `DefaultConfig()` (all features enabled)
+2. **`config.DefaultConfig()`** → Single configuration with sensible defaults
+
+**Rationale**:
+- gomark is primarily used in memos where users want all features
+- Configuration complexity was barrier to adoption
+- Smart defaults reduce cognitive load
 
 ## Future Evolution
 
@@ -210,16 +238,16 @@ gomark is designed to evolve pragmatically:
 ### Potential Future Additions
 
 **Only if there's demonstrated need**:
+- **Phase 2 HTML Elements**: `<details>/<summary>`, `<a>` with attributes, `<div>`
 - AST walking API (if users request it)
 - More output formats (if users request them)
-- Advanced HTML attributes (if simple approach proves insufficient)
-- Text-based parsing (if token-based proves limiting)
+- Advanced HTML attribute parsing (if current approach proves insufficient)
 
 ## Conclusion
 
 gomark represents a **pragmatic approach** to markdown parsing:
 
-- **Goldmark-inspired architecture** for familiarity and extensibility
+- **Clean modular architecture** for extensibility
 - **Performance-focused implementation** for real-world applications
 - **Simple, maintainable code** that developers can understand and modify
 - **Focused feature set** that solves real problems without over-engineering

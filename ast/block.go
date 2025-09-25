@@ -124,7 +124,7 @@ type ListKind string
 const (
 	UnorderedList   ListKind = "ul"
 	OrderedList     ListKind = "ol"
-	DescrpitionList ListKind = "dl"
+	DescriptionList ListKind = "dl"
 )
 
 type List struct {

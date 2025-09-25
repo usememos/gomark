@@ -108,7 +108,7 @@ type InlineParserFactory func() InlineParser
 - **Tag**: Tag syntax (`#tag`)
 - **ReferencedContent**: Referenced content (`[[ref]]`)
 - **EscapingCharacter**: Escaped characters (`\char`)
-- **HTMLElement**: HTML elements
+- **HTMLElement**: HTML elements (`<kbd>`, `<br>`, `<img>`, `<small>`, `<mark>`)
 
 ## Parsing Process
 
@@ -213,7 +213,7 @@ Converts raw markdown text into a sequence of tokens for parsing.
 
 ## Usage Examples
 
-### Basic Parsing
+### Basic Parsing (Legacy API)
 
 ```go
 import (
@@ -222,13 +222,24 @@ import (
 )
 
 // Tokenize markdown
-tokens := tokenizer.Tokenize("# Hello\n\nThis is **bold** text.")
+tokens := tokenizer.Tokenize("# Hello\n\nThis is **bold** text with <kbd>Ctrl</kbd> keys.")
 
-// Parse into AST
+// Parse into AST (all features enabled by default)
 doc, err := parser.Parse(tokens)
 if err != nil {
     // Handle parsing errors
 }
+```
+
+### Recommended High-Level API
+
+For most use cases, prefer the high-level API which includes tokenization:
+
+```go
+import "github.com/usememos/gomark"
+
+// Simple usage - all features including HTML elements enabled
+doc, err := gomark.Parse("Press <kbd>Ctrl</kbd>+<kbd>C</kbd> to copy")
 ```
 
 ### Custom Configuration
@@ -237,16 +248,22 @@ if err != nil {
 import (
     "github.com/usememos/gomark/config"
     "github.com/usememos/gomark/parser"
+    "github.com/usememos/gomark/parser/tokenizer"
 )
 
-// Create custom config
-cfg := config.DefaultConfig()
-cfg = cfg.WithExtension("tables", false)
-cfg = cfg.WithStrictMode(true)
+// Create custom config if needed
+cfg := config.DefaultConfig().                  // Start with default configuration
+    WithMaxDepth(100).                          // Limit nesting depth
+    WithMaxFileSize(1024 * 1024)                // 1MB file size limit
 
 // Parse with config
 tokens := tokenizer.Tokenize(markdown)
 doc, err := parser.ParseWithConfig(tokens, cfg)
+
+// Alternative: Use high-level API with config
+import "github.com/usememos/gomark"
+engine := gomark.NewEngine(gomark.WithConfig(cfg))
+doc, err := engine.Parse(markdown)
 ```
 
 ### Custom Parser Implementation
