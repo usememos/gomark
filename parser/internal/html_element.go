@@ -13,7 +13,7 @@ func NewHTMLElementParser() *HTMLElementParser {
 	return &HTMLElementParser{}
 }
 
-// ElementType defines the parsing behavior for different HTML elements
+// ElementType defines the parsing behavior for different HTML elements.
 type ElementType int
 
 const (
@@ -22,7 +22,7 @@ const (
 	ContainerElement                      // small, mark (nested markdown content)
 )
 
-// Phase 1 supported HTML elements with their parsing behavior
+// Phase 1 supported HTML elements with their parsing behavior.
 var supportedElements = map[string]ElementType{
 	"br":    SelfClosingElement,
 	"img":   SelfClosingElement,
@@ -50,12 +50,12 @@ func (*HTMLElementParser) Match(tokens []*tokenizer.Token) (ast.Node, int) {
 		return parseSimpleTextElement(tokens, tagName)
 	case ContainerElement:
 		return parseContainerElement(tokens, tagName)
+	default:
+		return nil, 0
 	}
-
-	return nil, 0
 }
 
-// Parse self-closing elements: <br>, <img src="..." alt="...">
+// Parse self-closing elements: <br>, <img src="..." alt="...">.
 func parseSelfClosingElement(tokens []*tokenizer.Token, tagName string) (ast.Node, int) {
 	// Find the closing >
 	greaterThanIndex := tokenizer.FindUnescaped(tokens, tokenizer.GreaterThan)
@@ -84,7 +84,7 @@ func parseSelfClosingElement(tokens []*tokenizer.Token, tagName string) (ast.Nod
 	}, greaterThanIndex + 1
 }
 
-// Parse simple text elements: <kbd>text content</kbd>
+// Parse simple text elements: <kbd>text content</kbd>.
 func parseSimpleTextElement(tokens []*tokenizer.Token, tagName string) (ast.Node, int) {
 	// Find opening tag close
 	openCloseIndex := tokenizer.FindUnescaped(tokens, tokenizer.GreaterThan)
@@ -120,7 +120,7 @@ func parseSimpleTextElement(tokens []*tokenizer.Token, tagName string) (ast.Node
 	}, openCloseIndex + 1 + closingTagStart + closingTagEnd + 1
 }
 
-// Parse container elements: <small>nested **markdown** content</small>
+// Parse container elements: <small>nested **markdown** content</small>.
 func parseContainerElement(tokens []*tokenizer.Token, tagName string) (ast.Node, int) {
 	// Find opening tag close
 	openCloseIndex := tokenizer.FindUnescaped(tokens, tokenizer.GreaterThan)
@@ -163,7 +163,7 @@ func parseContainerElement(tokens []*tokenizer.Token, tagName string) (ast.Node,
 	}, openCloseIndex + 1 + closingTagStart + closingTagEnd + 1
 }
 
-// parseAttributes extracts key-value pairs from attribute tokens
+// parseAttributes extracts key-value pairs from attribute tokens.
 func parseAttributes(tokens []*tokenizer.Token) map[string]string {
 	attributes := make(map[string]string)
 
@@ -260,7 +260,7 @@ func parseAttributes(tokens []*tokenizer.Token) map[string]string {
 	return attributes
 }
 
-// findClosingTag finds the start position of closing tag </tagName>
+// findClosingTag finds the start position of closing tag </tagName>.
 func findClosingTag(tokens []*tokenizer.Token, tagName string) int {
 	for i := 0; i < len(tokens)-3; i++ {
 		if tokens[i].Type == tokenizer.LessThan &&
@@ -272,7 +272,7 @@ func findClosingTag(tokens []*tokenizer.Token, tagName string) int {
 	return -1
 }
 
-// findClosingTagEnd finds the end position of closing tag (after >)
+// findClosingTagEnd finds the end position of closing tag (after >).
 func findClosingTagEnd(tokens []*tokenizer.Token, tagName string) int {
 	if len(tokens) < 4 {
 		return -1

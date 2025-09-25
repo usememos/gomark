@@ -19,7 +19,6 @@ type BlockParserFactory func() BlockParser
 // InlineParserFactory creates inline parsers.
 type InlineParserFactory func() InlineParser
 
-
 // NewParserRegistry creates a new parser registry with all parsers registered.
 func NewParserRegistry() *ParserRegistry {
 	registry := &ParserRegistry{
@@ -167,7 +166,6 @@ func (r *ParserRegistry) HasInlineParser(name string) bool {
 	_, exists := r.inlineParsers[name]
 	return exists
 }
-
 
 // registerDefaultParsers registers the built-in parsers.
 func (r *ParserRegistry) registerDefaultParsers() {

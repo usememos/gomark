@@ -30,7 +30,7 @@ func Parse(tokens []*tokenizer.Token) (*ast.Document, error) {
 }
 
 // ParseWithConfig parses tokens using the provided configuration.
-func ParseWithConfig(tokens []*tokenizer.Token, cfg *config.ParserConfig) (*ast.Document, error) {
+func ParseWithConfig(tokens []*tokenizer.Token, _ *config.ParserConfig) (*ast.Document, error) {
 	registry := NewParserRegistry()
 	return ParseWithRegistry(tokens, registry)
 }

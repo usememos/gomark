@@ -382,7 +382,7 @@ func (r *HTMLRenderer) renderHTMLElement(node *ast.HTMLElement) {
 	}
 }
 
-// escapeHTML escapes HTML special characters in attribute values
+// escapeHTML escapes HTML special characters in attribute values.
 func escapeHTML(s string) string {
 	s = strings.ReplaceAll(s, "&", "&amp;")
 	s = strings.ReplaceAll(s, "<", "&lt;")

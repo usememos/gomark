@@ -41,7 +41,6 @@ func WithConfig(cfg *config.ParserConfig) EngineOption {
 	}
 }
 
-
 var defaultEngine = NewEngine()
 
 // Parse parses markdown text into an AST document using the default engine.

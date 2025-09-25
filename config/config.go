@@ -11,12 +11,11 @@ type ParserConfig struct {
 	MaxFileSize int64
 }
 
-
 // DefaultConfig returns a configuration with sensible defaults for most use cases.
 // All markdown extensions are enabled by default.
 func DefaultConfig() *ParserConfig {
 	return &ParserConfig{
-		MaxDepth:    200, // Allow deeper nesting for complex content
+		MaxDepth:    200,              // Allow deeper nesting for complex content
 		MaxFileSize: 50 * 1024 * 1024, // 50MB for large documents with embedded content
 	}
 }

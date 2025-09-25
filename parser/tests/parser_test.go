@@ -296,8 +296,8 @@ func TestParser(t *testing.T) {
 							Content: "Hello ",
 						},
 						&ast.HTMLElement{
-							TagName:      "br",
-							Attributes:   map[string]string{},
+							TagName:       "br",
+							Attributes:    map[string]string{},
 							IsSelfClosing: true,
 						},
 						&ast.Text{
