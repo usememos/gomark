@@ -61,9 +61,9 @@ func (r *ParserRegistry) GetBlockParsers() []BlockParser {
 		"horizontal_rule",
 		"blockquote",
 		"ordered_list",
+		"task_list",
 		"unordered_list",
 		"table",
-		"task_list",
 		"math_block",
 		"embedded_content",
 	}

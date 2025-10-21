@@ -61,7 +61,7 @@ func TestHTMLRenderer(t *testing.T) {
 		},
 		{
 			text:     "- [ ] hello\n- [x] world",
-			expected: `<dl><li><input type="checkbox" disabled />hello</li><br><li><input type="checkbox" checked disabled />world</li></dl>`,
+			expected: `<ul><li><input type="checkbox" disabled />hello</li><br><li><input type="checkbox" checked disabled />world</li></ul>`,
 		},
 	}
 
