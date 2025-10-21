@@ -11,6 +11,28 @@ func NewLinkParser() *LinkParser {
 	return &LinkParser{}
 }
 
+// findMatchingRightSquareBracket finds the index of the closing ] that matches the opening [
+// It handles nested brackets by tracking bracket depth
+func findMatchingRightSquareBracket(tokens []*tokenizer.Token) int {
+	depth := 0
+	for i, token := range tokens {
+		// Skip escaped brackets
+		if i > 0 && tokens[i-1].Type == tokenizer.Backslash {
+			continue
+		}
+
+		if token.Type == tokenizer.LeftSquareBracket {
+			depth++
+		} else if token.Type == tokenizer.RightSquareBracket {
+			if depth == 0 {
+				return i
+			}
+			depth--
+		}
+	}
+	return -1
+}
+
 func (*LinkParser) Match(tokens []*tokenizer.Token) (ast.Node, int) {
 	matchedTokens := tokenizer.GetFirstLine(tokens)
 	if len(matchedTokens) < 5 {
@@ -20,14 +42,12 @@ func (*LinkParser) Match(tokens []*tokenizer.Token) (ast.Node, int) {
 		return nil, 0
 	}
 
-	rightSquareBracketIndex := tokenizer.FindUnescaped(matchedTokens[1:], tokenizer.RightSquareBracket)
+	rightSquareBracketIndex := findMatchingRightSquareBracket(matchedTokens[1:])
 	if rightSquareBracketIndex == -1 {
 		return nil, 0
 	}
 	contentTokens := matchedTokens[1 : rightSquareBracketIndex+1]
-	if tokenizer.FindUnescaped(contentTokens, tokenizer.LeftSquareBracket) != -1 {
-		return nil, 0
-	}
+
 	if len(contentTokens)+4 >= len(matchedTokens) {
 		return nil, 0
 	}
@@ -49,7 +69,7 @@ func (*LinkParser) Match(tokens []*tokenizer.Token) (ast.Node, int) {
 		return nil, 0
 	}
 
-	contentNodes, err := ParseInlineWithParsers(contentTokens, []InlineParser{NewEscapingCharacterParser(), NewTextParser()})
+	contentNodes, err := ParseInlineWithParsers(contentTokens, []InlineParser{NewImageParser(), NewEscapingCharacterParser(), NewTextParser()})
 	if err != nil {
 		return nil, 0
 	}

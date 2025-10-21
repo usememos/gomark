@@ -57,6 +57,20 @@ func TestLinkParser(t *testing.T) {
 				URL:     "https://example.com",
 			},
 		},
+		{
+			text: "[![alt text](https://example.com/image.png)](https://example.com)",
+			node: &ast.Link{
+				Content: []ast.Node{&ast.Image{AltText: "alt text", URL: "https://example.com/image.png"}},
+				URL:     "https://example.com",
+			},
+		},
+		{
+			text: "[![](https://example.com/image.png)](https://example.com)",
+			node: &ast.Link{
+				Content: []ast.Node{&ast.Image{AltText: "", URL: "https://example.com/image.png"}},
+				URL:     "https://example.com",
+			},
+		},
 	}
 	for _, test := range tests {
 		tokens := tokenizer.Tokenize(test.text)
